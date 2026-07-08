@@ -16,6 +16,9 @@ a server (new or existing), and manage everything from a clean interface.
 | --- | --- |
 | ![World Settings](preview/World%20Settings.png) | ![World Admin](preview/World%20Admin.png) |
 
+| Mods |
+| --- | --- |
+| ![Mods](preview/Mods.png) |
 ---
 
 ## What it does
