@@ -3,6 +3,18 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] — Unreleased
+
+### Added
+- **Full UE4SS support** for Lua mods (the kind most Palworld mods on Nexus use),
+  managed separately from Steam Workshop mods in the Mods tab:
+  - Install UE4SS into a world from a user-provided release zip; the app extracts it
+    into `Pal\Binaries\Win64` and forces `GuiConsoleVisible=0` (a visible console
+    crashes a dedicated server on launch).
+  - Detect whether UE4SS is installed and whether its console setting is server-safe,
+    with a one-click fix.
+  - Import, enable/disable (via `mods.txt` + `enabled.txt`), and remove Lua mods.
+
 ## [1.1.0] — 2026-07-08
 
 ### Added

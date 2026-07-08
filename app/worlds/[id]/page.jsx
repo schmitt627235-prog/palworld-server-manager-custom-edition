@@ -10,6 +10,7 @@ import SettingsEditor from "@/components/SettingsEditor";
 import BackupsPanel from "@/components/BackupsPanel";
 import SchedulePanel from "@/components/SchedulePanel";
 import ModsPanel from "@/components/ModsPanel";
+import Ue4ssPanel from "@/components/Ue4ssPanel";
 import AdminPanel from "@/components/AdminPanel";
 
 const TABS = [
@@ -151,7 +152,17 @@ export default function WorldDetail() {
         {tab === "settings" && <SettingsEditor worldId={id} running={running} />}
         {tab === "backups" && <BackupsPanel worldId={id} backups={backups} running={running} onChange={load} />}
         {tab === "schedule" && <SchedulePanel worldId={id} schedules={schedules} onChange={load} />}
-        {tab === "mods" && <ModsPanel worldId={id} running={running} />}
+        {tab === "mods" && (
+          <div style={{ display: "grid", gap: "1.8rem" }}>
+            <div>
+              <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Steam Workshop mods</h3>
+              <ModsPanel worldId={id} running={running} />
+            </div>
+            <div style={{ borderTop: "1px solid var(--line)", paddingTop: "1.4rem" }}>
+              <Ue4ssPanel worldId={id} running={running} />
+            </div>
+          </div>
+        )}
         {tab === "admin" && <AdminPanel world={world} running={running} onChange={load} />}
       </div>
 
