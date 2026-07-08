@@ -6,6 +6,9 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -17,10 +20,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run dist:win
-      - uses: actions/upload-artifact@v4
-        with:
-          name: windows-installer
-          path: release/*.exe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux:
     runs-on: ubuntu-latest
@@ -32,22 +33,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run dist:linux
-      - uses: actions/upload-artifact@v4
-        with:
-          name: linux-appimage
-          path: release/*.AppImage
-
-  release:
-    needs: [build-windows, build-linux]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            artifacts/windows-installer/*.exe
-            artifacts/linux-appimage/*.AppImage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
