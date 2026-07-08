@@ -6,8 +6,31 @@ export default function ChatPanel({ worldId, running }) {
   const [messages, setMessages] = useState([]);
   const [announce, setAnnounce] = useState("");
   const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState(null); // { modInstalled, bundledAvailable }
+  const [installing, setInstalling] = useState(false);
   const boxRef = useRef(null);
   const esRef = useRef(null);
+
+  const loadStatus = useCallback(() => {
+    api(`/api/worlds/${worldId}/chat`).then((r) =>
+      setStatus({ modInstalled: r.modInstalled, bundledAvailable: r.bundledAvailable })
+    ).catch(() => {});
+  }, [worldId]);
+
+  useEffect(() => { loadStatus(); }, [loadStatus]);
+
+  const installMod = async () => {
+    setInstalling(true);
+    try {
+      const r = await api(`/api/worlds/${worldId}/chat`, { method: "POST" });
+      toast(r.ue4ssDetected
+        ? "Chat mod installed. Restart the world to start capturing chat."
+        : "Chat mod copied, but UE4SS was not detected — install UE4SS first.",
+        r.ue4ssDetected ? "success" : "error");
+      loadStatus();
+    } catch (e) { toast(e.message, "error"); }
+    finally { setInstalling(false); }
+  };
 
   useEffect(() => {
     const es = new EventSource(`/api/worlds/${worldId}/chat/stream`);
@@ -44,6 +67,24 @@ export default function ChatPanel({ worldId, running }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: 520 }}>
+      {status && !status.modInstalled && (
+        <div className="panel-inset" style={{ padding: "0.8rem 1rem", marginBottom: "0.8rem", borderLeft: "3px solid var(--yellow)" }}>
+          <div style={{ fontWeight: 800, fontSize: "0.9rem", marginBottom: 4 }}>Chat capture needs a mod</div>
+          <p className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem", margin: "0 0 8px" }}>
+            Palworld doesn’t expose in-game chat to servers on its own. Install the bundled
+            capture mod (requires <b>UE4SS</b> in <code>Pal/Binaries/Win64</code>), then restart the world.
+          </p>
+          <button className="btn btn-primary" style={{ padding: "0.35rem 0.7rem" }}
+            onClick={installMod} disabled={installing || !status.bundledAvailable}>
+            <Icon name="download" size={15} /> {installing ? "Installing…" : "Install chat relay mod"}
+          </button>
+        </div>
+      )}
+      {status && status.modInstalled && (
+        <div className="subtle" style={{ fontWeight: 700, fontSize: "0.72rem", marginBottom: "0.6rem" }}>
+          <span className="s-running">● Chat mod installed</span> — player messages appear here live while the world runs.
+        </div>
+      )}
       <div ref={boxRef} className="panel-inset" style={{ flex: 1, overflowY: "auto", padding: "0.8rem", marginBottom: "0.8rem" }}>
         {messages.length === 0 ? (
           <div className="subtle" style={{ fontWeight: 600, textAlign: "center", marginTop: "2rem" }}>

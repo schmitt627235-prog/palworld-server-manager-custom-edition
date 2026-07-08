@@ -73,6 +73,17 @@ export default function SettingsPage() {
             );
           })}
         </div>
+
+        <label className="label" style={{ marginTop: "1rem" }}>In-game chat relay</label>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <button className={`btn ${s.discordRelayChat ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
+            onClick={() => save({ discordRelayChat: !s.discordRelayChat })} disabled={saving}>
+            {s.discordRelayChat ? "On" : "Off"}
+          </button>
+          <span className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem" }}>
+            Relay captured in-game chat to Discord (needs the chat mod on each world).
+          </span>
+        </div>
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
