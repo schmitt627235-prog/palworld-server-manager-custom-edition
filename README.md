@@ -1,0 +1,125 @@
+# Palworld Server Manager
+
+A desktop app for Windows and Linux that makes running one or more **Palworld dedicated
+servers** simple — no command line, no editing config files by hand. Install it, point it at
+a server (new or existing), and manage everything from a clean interface.
+
+---
+
+## What it does
+
+- **Provision new servers** via SteamCMD, or **adopt an existing** Palworld dedicated
+  server install (it keeps your world, settings, and admin password).
+- **Start / stop / restart / update** each world with one click. A crash guardian can
+  automatically restart a server that goes down.
+- **Full settings editor** — every option from `PalWorldSettings.ini` (100+ settings)
+  grouped into readable sections, with search, per-field reset, and community-tested
+  presets. Only the settings you change are written, so nothing else is disturbed.
+- **Players** — see who's online; kick / ban / unban through the official REST API.
+- **Console** — live server log stream.
+- **Backups** — take, restore, and schedule world backups.
+- **Schedule** — automatic restarts / backups on an interval or at a set time.
+- **Mods** — import and toggle server mods.
+- **Customize** each world with a profile icon, banner, and accent color.
+- **Export / Import** settings and full world profiles as zip files, for sharing or
+  moving between machines.
+- **Multiple worlds** side by side, each with its own ports (auto-assigned to avoid
+  collisions).
+
+---
+
+## Getting started
+
+1. **Install** the app using the provided installer (Windows) or AppImage (Linux).
+2. On first launch you'll see **Your worlds**. Click **New world** to create one, or use
+   **Use existing** to adopt a server you already have (for example under
+   `Steam\steamapps\common\PalServer`).
+3. Once a world is listed, click **Start**. The first launch may take a moment while the
+   server initializes.
+4. Open a world and use the tabs — Overview, Players, Console, Settings, Backups,
+   Schedule, Mods, Admin — to manage it.
+
+---
+
+## Connecting to your server
+
+Open a world and look at the **Connect** box on the Overview tab. On the same PC, players
+join with:
+
+```
+127.0.0.1:<game port>     (e.g. 127.0.0.1:8211)
+```
+
+In Palworld: **Join Multiplayer → Connect via IP** and paste the address.
+
+### Letting friends join over the internet
+By default your server is only reachable on your local network. To open it up you can port
+forward on your router, or use a free tunneling service. The app includes a step-by-step
+guide for **playit.gg** (a free option that needs no router changes) under the **Info**
+section. This is a recommendation, not a requirement.
+
+---
+
+## Dedicated vs community servers
+
+A **community server** is the same as a dedicated server, except it also appears in
+Palworld's in-game public server browser so anyone can find and join it. It's toggled with
+a launch flag. A **private/dedicated** server is joined by IP only. Either way, the app manages it the same — toggle it per world in the Admin tab.
+
+---
+
+## A note on settings
+
+Palworld only applies server settings **when the server boots**, so after changing settings
+you must **restart** the world for them to take effect. The app writes a minimal config
+(only what you change), matching how Palworld itself stores settings — so your existing
+values and any in-game choices are preserved.
+
+Ports, the REST API, and the admin password are managed by the app automatically and aren't
+shown in the settings editor, so they can't be broken by accident.
+
+---
+
+## Data & storage
+
+The app stores its registry (your list of worlds and their metadata) in your user data
+folder:
+
+- **Windows:** `%APPDATA%\palworld-server-manager\`
+- **Linux:** `~/.config/palworld-server-manager/`
+
+Your actual Palworld worlds, saves, and settings stay in each server's own install folder —
+the app never moves them.
+
+---
+
+## Requirements
+
+- Windows 10/11 (64-bit) or a modern 64-bit Linux distribution.
+- Enough disk space for the Palworld dedicated server and its saves.
+- For provisioning new servers: an internet connection (SteamCMD downloads the server).
+
+---
+
+## Building from source
+
+Requires Node.js 22.5+.
+
+```bash
+npm install
+npm run dist:win      # Windows installer -> release/
+npm run dist:linux    # Linux AppImage    -> release/
+npm run pack          # unpacked build for testing -> release/
+```
+
+On Windows, run the first packaging build from a terminal opened **as Administrator** (or
+with Developer Mode enabled) so electron-builder can extract its tooling.
+
+---
+
+## Tech
+
+Electron shell wrapping a self-contained Next.js server (App Router). Data is stored in
+SQLite via a pure-WASM backend, so the app needs no native modules or database install.
+All Palworld administration uses the official REST API; the deprecated RCON protocol is off
+by default and opt-in only.

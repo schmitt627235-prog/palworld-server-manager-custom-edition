@@ -1,0 +1,77 @@
+"use client";
+import { useState } from "react";
+import { api, Icon, fmtBytes, fmtTime, toast } from "@/components/ui";
+
+export default function BackupsPanel({ worldId, backups, running, onChange }) {
+  const [busy, setBusy] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const isElectron = typeof window !== "undefined" && window.desktop?.isElectron;
+
+  const create = async () => {
+    setBusy(true);
+    try {
+      await api(`/api/worlds/${worldId}/backups`, { method: "POST" });
+      toast("Backup created", "success");
+      onChange();
+    } catch (e) { toast(e.message, "error"); }
+    finally { setBusy(false); }
+  };
+
+  const restore = async (backupId) => {
+    if (running) return toast("Stop the world before restoring", "error");
+    if (!confirm("Restore this backup? A safety backup of the current save is taken first.")) return;
+    setBusy(true);
+    try {
+      await api(`/api/worlds/${worldId}/backups/restore`, { method: "POST", body: { backupId } });
+      toast("Backup restored", "success");
+      onChange();
+    } catch (e) { toast(e.message, "error"); }
+    finally { setBusy(false); }
+  };
+
+  const importSave = async () => {
+    if (running) return toast("Stop the world before importing", "error");
+    if (!isElectron) return toast("Save import via file picker is available in the desktop app.");
+    const zipPath = await window.desktop.pickZip();
+    if (!zipPath) return;
+    setImporting(true);
+    try {
+      const { check } = await api(`/api/worlds/${worldId}/import`, { method: "POST", body: { zipPath } });
+      toast(`Imported save · ${check.playerCount} players`, "success");
+      onChange();
+    } catch (e) { toast(e.message, "error"); }
+    finally { setImporting(false); }
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+        <button className="btn btn-primary" onClick={create} disabled={busy}>
+          <Icon name="download" /> {busy ? "Working…" : "Back up now"}
+        </button>
+        <button className="btn btn-ghost" onClick={importSave} disabled={importing || running}>
+          <Icon name="upload" /> {importing ? "Importing…" : "Import save (.zip)"}
+        </button>
+      </div>
+
+      {backups.length === 0 ? (
+        <p className="subtle" style={{ fontWeight: 700 }}>No backups yet. Backups zip this world&apos;s Saved folder and rotate automatically.</p>
+      ) : (
+        <div style={{ display: "grid", gap: "0.5rem" }}>
+          {backups.map((b) => (
+            <div key={b.id} className="panel-inset" style={{ padding: "0.6rem 0.8rem", display: "flex", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
+              <Icon name="download" size={16} />
+              <div style={{ flex: 1, minWidth: 160 }}>
+                <div style={{ fontWeight: 800, fontSize: "0.84rem" }}>{fmtTime(b.created_at)}</div>
+                <div className="subtle" style={{ fontSize: "0.72rem", fontWeight: 700 }}>{fmtBytes(b.size_bytes)} · {b.reason}</div>
+              </div>
+              <button className="btn btn-ghost" style={{ padding: "0.3rem 0.7rem" }} disabled={busy || running} onClick={() => restore(b.id)}>
+                <Icon name="restart" size={14} /> Restore
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
