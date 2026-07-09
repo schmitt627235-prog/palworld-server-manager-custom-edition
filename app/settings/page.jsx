@@ -1,16 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
 import { api, Icon, toast } from "@/components/ui";
-
-const EVENT_KINDS = ["start", "stop", "restart", "crash", "backup", "update"];
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const [s, setS] = useState(null);
   const [steam, setSteam] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [testing, setTesting] = useState(false);
 
   useEffect(() => {
     api("/api/settings").then((r) => setS(r.settings)).catch(() => {});
@@ -27,18 +25,7 @@ export default function SettingsPage() {
     finally { setSaving(false); }
   };
 
-  const sendTest = async () => {
-    setTesting(true);
-    try {
-      await api("/api/settings/test-notify", { method: "POST", body: { webhook: s.discordWebhook } });
-      toast("Test message sent — check your Discord channel", "success");
-    } catch (e) { toast(e.message, "error"); }
-    finally { setTesting(false); }
-  };
-
   if (!s) return <div className="subtle" style={{ fontWeight: 700 }}>Loading…</div>;
-
-  const notify = s.notifyEvents || {};
 
   return (
     <div>
@@ -55,34 +42,16 @@ export default function SettingsPage() {
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
         <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Discord notifications</h3>
-        <label className="label">Webhook URL</label>
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-          <input className="input" value={s.discordWebhook || ""} onChange={(e) => setS({ ...s, discordWebhook: e.target.value })} placeholder="https://discord.com/api/webhooks/…" />
-          <button className="btn btn-ghost" onClick={sendTest} disabled={testing || !s.discordWebhook}>{testing ? "Sending…" : "Send test"}</button>
-          <button className="btn btn-primary" onClick={() => save({ discordWebhook: s.discordWebhook })} disabled={saving}>Save</button>
-        </div>
-        <label className="label">Notify on</label>
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          {EVENT_KINDS.map((k) => {
-            const on = notify[k] !== false;
-            return (
-              <button key={k} className={`btn ${on ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
-                onClick={() => save({ notifyEvents: { ...notify, [k]: !on } })}>
-                {k}
-              </button>
-            );
-          })}
-        </div>
-
-        <label className="label" style={{ marginTop: "1rem" }}>In-game chat relay</label>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          <button className={`btn ${s.discordRelayChat ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
-            onClick={() => save({ discordRelayChat: !s.discordRelayChat })} disabled={saving}>
-            {s.discordRelayChat ? "On" : "Off"}
-          </button>
-          <span className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem" }}>
-            Relay captured in-game chat to Discord (needs the chat mod on each world).
-          </span>
+        <div className="panel-inset" style={{ padding: "0.9rem 1.1rem", borderLeft: "3px solid var(--yellow)" }}>
+          <div style={{ fontWeight: 800, fontSize: "0.9rem", marginBottom: 4 }}>This moved into each world</div>
+          <p className="subtle" style={{ fontWeight: 600, fontSize: "0.8rem", margin: 0 }}>
+            Discord webhooks are now set <b>per world</b>, so each server can post to its own channel.
+            Open a world → <b>Discord</b> tab to add its webhook, choose which events to announce, and
+            toggle chat relay. Any webhook you had here before has been cleared.
+          </p>
+          <Link href="/" className="btn btn-primary" style={{ marginTop: "0.8rem", padding: "0.35rem 0.7rem" }}>
+            <Icon name="globe" size={15} /> Go to your worlds
+          </Link>
         </div>
       </div>
 

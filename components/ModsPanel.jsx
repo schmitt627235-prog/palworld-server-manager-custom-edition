@@ -67,9 +67,15 @@ export default function ModsPanel({ worldId, running }) {
           Palworld server-side mods run on the <b>Windows</b> dedicated server only. This host isn&apos;t Windows, so mods may not load even if configured here.
         </Notice>
       )}
-      <Notice color="var(--accent)">
-        Mods load only at server boot — <b>restart the world</b> after any change. On restart, Palworld deploys each active mod per its Info.json rules.
-      </Notice>
+      {running ? (
+        <Notice color="var(--red)">
+          The world is <b>running</b>. Stop it to add, enable/disable, or remove mods — these changes only take effect at boot.
+        </Notice>
+      ) : (
+        <Notice color="var(--accent)">
+          Mods load only at server boot — <b>restart the world</b> after any change. On restart, Palworld deploys each active mod per its Info.json rules.
+        </Notice>
+      )}
 
       {/* global switch + import controls */}
       <div className="panel-inset" style={{ padding: "0.9rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
@@ -79,16 +85,16 @@ export default function ModsPanel({ worldId, running }) {
             {data.globalEnable ? "Enabled — active mods will load on next start." : "Disabled — server launches with -NoMods."}
           </div>
         </div>
-        <button className={`btn ${data.globalEnable ? "btn-primary" : "btn-ghost"}`} disabled={busy} onClick={() => toggleGlobal(!data.globalEnable)}>
+        <button className={`btn ${data.globalEnable ? "btn-primary" : "btn-ghost"}`} disabled={busy || running} onClick={() => toggleGlobal(!data.globalEnable)}>
           {data.globalEnable ? "On" : "Off"}
         </button>
       </div>
 
       <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1.2rem", flexWrap: "wrap" }}>
-        <button className="btn btn-primary" disabled={busy} onClick={importZip}><Icon name="upload" /> Import mod (.zip)</button>
+        <button className="btn btn-primary" disabled={busy || running} onClick={importZip}><Icon name="upload" /> Import mod (.zip)</button>
         <div style={{ display: "flex", gap: "0.4rem", flex: 1, minWidth: 240 }}>
-          <input className="input" placeholder="Steam Workshop ID (already downloaded in Steam)" value={wsId} onChange={(e) => setWsId(e.target.value)} />
-          <button className="btn btn-subtle" disabled={busy} onClick={addWorkshop}>Add</button>
+          <input className="input" placeholder="Steam Workshop ID (already downloaded in Steam)" value={wsId} onChange={(e) => setWsId(e.target.value)} disabled={running} />
+          <button className="btn btn-subtle" disabled={busy || running} onClick={addWorkshop}>Add</button>
         </div>
       </div>
 
@@ -116,10 +122,10 @@ export default function ModsPanel({ worldId, running }) {
                 <div className="subtle" style={{ fontSize: "0.72rem", fontWeight: 600 }}>{m.packageName || m.folder}</div>
               </div>
               <button className={`btn ${m.enabled ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
-                disabled={busy || !m.packageName || !m.isServer} onClick={() => toggleMod(m.packageName, !m.enabled)}>
+                disabled={busy || running || !m.packageName || !m.isServer} onClick={() => toggleMod(m.packageName, !m.enabled)}>
                 {m.enabled ? "Enabled" : "Disabled"}
               </button>
-              <button className="btn btn-danger" style={{ padding: "0.35rem 0.6rem" }} disabled={busy} onClick={() => removeMod(m.packageName || m.folder)}>
+              <button className="btn btn-danger" style={{ padding: "0.35rem 0.6rem" }} disabled={busy || running} onClick={() => removeMod(m.packageName || m.folder)}>
                 <Icon name="trash" size={14} />
               </button>
             </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { api, Icon, toast } from "@/components/ui";
 
 // Resize/compress an image file to a data URL under a target size.
@@ -28,6 +28,7 @@ function fileToDataURL(file, maxDim, quality = 0.82) {
 }
 
 export default function CustomizeModal({ world, onClose, onDone }) {
+  const downOnBackdrop = useRef(false);
   const [name, setName] = useState(world.display_name || "");
   const [icon, setIcon] = useState(world.icon_data || null);
   const [banner, setBanner] = useState(world.banner_data || null);
@@ -57,8 +58,10 @@ export default function CustomizeModal({ world, onClose, onDone }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="panel animate-floatUp" style={{ width: 560, maxWidth: "94vw", maxHeight: "90vh", overflow: "auto", padding: 0 }} onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay"
+      onMouseDown={(e) => { downOnBackdrop.current = e.target === e.currentTarget; }}
+      onClick={(e) => { if (e.target === e.currentTarget && downOnBackdrop.current) onClose(); }}>
+      <div className="panel animate-floatUp" style={{ width: 560, maxWidth: "94vw", maxHeight: "90vh", overflow: "auto", padding: 0 }}>
         {/* live preview banner */}
         <div style={{ position: "relative", height: 130, background: "var(--bg-2)", overflow: "hidden", borderTopLeftRadius: "inherit", borderTopRightRadius: "inherit" }}>
           {banner && <img src={banner} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}

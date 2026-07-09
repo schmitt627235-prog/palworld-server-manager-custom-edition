@@ -27,6 +27,7 @@ export default function ChatPanel({ worldId, running, onGoToUe4ss }) {
   useEffect(() => { loadStatus(); }, [loadStatus]);
 
   const installMod = async () => {
+    if (running) return toast("Stop the world before changing the chat mod.", "error");
     setInstalling(true);
     try {
       const r = await api(`/api/worlds/${worldId}/chat`, { method: "POST" });
@@ -40,6 +41,7 @@ export default function ChatPanel({ worldId, running, onGoToUe4ss }) {
   };
 
   const removeMod = async () => {
+    if (running) return toast("Stop the world before changing the chat mod.", "error");
     if (!confirm("Remove the chat relay mod from this server? Chat capture stops until you reinstall it. Restart the world to fully unload the mod.")) return;
     setRemoving(true);
     try {
@@ -110,10 +112,11 @@ export default function ChatPanel({ worldId, running, onGoToUe4ss }) {
               <Icon name="shield" size={15} /> Install UE4SS →
             </button>
             <button className="btn btn-ghost" style={{ padding: "0.35rem 0.7rem" }}
-              onClick={installMod} disabled={installing || !status.bundledAvailable}>
+              onClick={installMod} disabled={installing || running || !status.bundledAvailable}>
               {installing ? "Copying…" : "Copy chat mod anyway"}
             </button>
           </div>
+          {running && <p className="subtle" style={{ fontWeight: 700, fontSize: "0.74rem", margin: "8px 0 0" }}>Stop the world to change the chat mod.</p>}
         </div>
       )}
 
@@ -125,9 +128,10 @@ export default function ChatPanel({ worldId, running, onGoToUe4ss }) {
             UE4SS is installed. Add the bundled chat relay mod, then restart the world to start capturing chat.
           </p>
           <button className="btn btn-primary" style={{ padding: "0.35rem 0.7rem" }}
-            onClick={installMod} disabled={installing || !status.bundledAvailable}>
+            onClick={installMod} disabled={installing || running || !status.bundledAvailable}>
             <Icon name="download" size={15} /> {installing ? "Installing…" : "Install chat relay mod"}
           </button>
+          {running && <p className="subtle" style={{ fontWeight: 700, fontSize: "0.74rem", margin: "8px 0 0" }}>Stop the world to install the chat mod.</p>}
         </div>
       )}
 
@@ -138,7 +142,7 @@ export default function ChatPanel({ worldId, running, onGoToUe4ss }) {
             <span className="s-running">● Chat mod installed</span> — player messages appear here live while the world runs.
           </div>
           <button className="btn btn-danger" style={{ padding: "0.3rem 0.6rem", fontSize: "0.76rem" }}
-            onClick={removeMod} disabled={removing}>
+            onClick={removeMod} disabled={removing || running} title={running ? "Stop the world to remove the chat mod" : undefined}>
             <Icon name="trash" size={14} /> {removing ? "Removing…" : "Remove chat mod"}
           </button>
         </div>

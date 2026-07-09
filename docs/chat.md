@@ -72,9 +72,11 @@ Line format:
 
 ### Discord relay
 
-Gated by a global setting `discordRelayChat`. When on and a webhook is configured, each
-captured message is posted to the webhook as the player's name, giving a Palworld→Discord
-cross-chat feed. Reuses `lib/notify.post`.
+Gated per world by the `discord_relay_chat` column. When on and that world's
+`discord_webhook` is configured (world → **Admin → Discord notifications**), each captured
+message is posted to the webhook as the player's name, giving a Palworld→Discord cross-chat
+feed. Reuses `lib/notify.post`. The webhook and its event toggles are per world, so
+different servers relay to different channels.
 
 ## Setup for users
 
@@ -86,7 +88,8 @@ cross-chat feed. Reuses `lib/notify.post`.
 3. **Restart the world** (UE4SS loads mods only at startup). Player chat now appears in
    the Chat tab. On load, UE4SS.log prints `[PSMChatRelay] loaded` and the mod creates
    `Pal/Saved/psm-chat.jsonl`.
-4. (Optional) enable **Relay chat to Discord** in Settings with a webhook set.
+4. (Optional) set this world's **Discord webhook** and enable **Chat relay** in the
+   world's **Admin → Discord notifications** section.
 
 ## Limits / notes
 

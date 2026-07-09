@@ -67,9 +67,14 @@ export async function PATCH(req, { params }) {
     dbm.logEvent(params.id, "settings", `Install folder changed to ${info.installDir}`);
   }
 
-  const allowed = ["display_name", "admin_password", "autostart", "crash_guard", "rest_api_enabled", "extra_args", "game_port", "query_port", "rest_api_port", "rcon_port", "community_server", "mods_enabled"];
+  const allowed = ["display_name", "admin_password", "autostart", "crash_guard", "rest_api_enabled", "extra_args", "game_port", "query_port", "rest_api_port", "rcon_port", "community_server", "mods_enabled", "discord_webhook", "notify_events", "discord_relay_chat"];
   const clean = {};
   for (const k of allowed) if (k in patch) clean[k] = patch[k];
+  // notify_events is stored as a JSON string column; accept an object from the client.
+  if (clean.notify_events && typeof clean.notify_events === "object") {
+    clean.notify_events = JSON.stringify(clean.notify_events);
+  }
+  if ("discord_relay_chat" in clean) clean.discord_relay_chat = clean.discord_relay_chat ? 1 : 0;
   const updated = dbm.updateWorld(params.id, clean);
   // if network fields changed and install exists, re-apply ini
   if (fs.existsSync(updated.install_dir)) {

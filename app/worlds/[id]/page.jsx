@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api, Icon, StatusChip, fmtUptime, fmtTime, toast } from "@/components/ui";
@@ -13,6 +13,7 @@ import ModsPanel from "@/components/ModsPanel";
 import Ue4ssPanel from "@/components/Ue4ssPanel";
 import AdminPanel from "@/components/AdminPanel";
 import ChatPanel from "@/components/ChatPanel";
+import DiscordPanel from "@/components/DiscordPanel";
 
 const TABS = [
   { id: "overview", label: "Overview", icon: "grid" },
@@ -23,6 +24,7 @@ const TABS = [
   { id: "backups", label: "Backups", icon: "download" },
   { id: "schedule", label: "Schedule", icon: "clock" },
   { id: "mods", label: "Mods", icon: "shield" },
+  { id: "discord", label: "Discord", icon: "bell" },
   { id: "admin", label: "Admin", icon: "settings" },
 ];
 
@@ -33,6 +35,7 @@ export default function WorldDetail() {
   const [tab, setTab] = useState("overview");
   const [busy, setBusy] = useState(null);
   const [customizing, setCustomizing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     try { setData(await api(`/api/worlds/${id}`)); }
@@ -67,14 +70,6 @@ export default function WorldDetail() {
     finally { setBusy(null); }
   };
 
-  const del = async () => {
-    if (!confirm("Delete this world profile? (Server files on disk are kept.)")) return;
-    try {
-      await api(`/api/worlds/${id}`, { method: "DELETE" });
-      toast("World deleted", "success");
-      router.push("/");
-    } catch (e) { toast(e.message, "error"); }
-  };
 
   if (!data) return <div className="subtle" style={{ fontWeight: 700 }}>Loading…</div>;
   const { world, live, events, sessions, schedules, backups } = data;
@@ -149,7 +144,7 @@ export default function WorldDetail() {
       </div>
 
       <div className="panel" style={{ padding: "1.3rem" }}>
-        {tab === "overview" && <Overview world={world} live={live} events={events} sessions={sessions} onDelete={del} />}
+        {tab === "overview" && <Overview world={world} live={live} events={events} sessions={sessions} onDelete={() => setDeleting(true)} />}
         {tab === "players" && <PlayersPanel worldId={id} players={live?.players} onChange={load} />}
         {tab === "chat" && <ChatPanel worldId={id} running={running} onGoToUe4ss={() => setTab("mods")} />}
         {tab === "console" && <LogsPanel worldId={id} />}
@@ -167,13 +162,108 @@ export default function WorldDetail() {
             </div>
           </div>
         )}
+        {tab === "discord" && <DiscordPanel world={world} onChange={load} />}
         {tab === "admin" && <AdminPanel world={world} running={running} onChange={load} />}
       </div>
 
       {customizing && (
         <CustomizeModal world={world} onClose={() => setCustomizing(false)} onDone={() => { setCustomizing(false); load(); }} />
       )}
+
+      {deleting && (
+        <DeleteWorldModal world={world} onClose={() => setDeleting(false)} onDeleted={() => { toast("World deleted", "success"); router.push("/"); }} />
+      )}
     </div>
+  );
+}
+
+function DeleteWorldModal({ world, onClose, onDeleted }) {
+  const [mode, setMode] = useState("profile"); // "profile" | "disk"
+  const [confirmName, setConfirmName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const downOnBackdrop = useRef(false);
+
+  const withFiles = mode === "disk";
+  const nameOk = !withFiles || confirmName.trim() === world.display_name;
+
+  const doDelete = async () => {
+    if (!nameOk) return;
+    setBusy(true);
+    try {
+      await api(`/api/worlds/${world.world_id}${withFiles ? "?files=1" : ""}`, { method: "DELETE" });
+      onDeleted();
+    } catch (e) { toast(e.message, "error"); setBusy(false); }
+  };
+
+  return (
+    <div
+      onMouseDown={(e) => { downOnBackdrop.current = e.target === e.currentTarget; }}
+      onClick={(e) => { if (e.target === e.currentTarget && downOnBackdrop.current) onClose(); }}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "grid", placeItems: "center", zIndex: 60, padding: "1rem" }}>
+      <div className="panel" style={{ width: "100%", maxWidth: 520, padding: "1.4rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+          <h3 className="heading" style={{ fontSize: "1.15rem", margin: 0 }}>Delete “{world.display_name}”</h3>
+          <button className="btn btn-ghost" style={{ padding: "0.3rem 0.5rem" }} onClick={onClose}><Icon name="x" size={16} /></button>
+        </div>
+        <p className="subtle" style={{ fontWeight: 600, fontSize: "0.82rem", marginTop: 0 }}>
+          Choose what to remove. This cannot be undone.
+        </p>
+
+        <div style={{ display: "grid", gap: "0.6rem", margin: "1rem 0" }}>
+          <DeleteOption
+            active={mode === "profile"} onClick={() => setMode("profile")}
+            title="Delete profile only"
+            desc="Removes this world from the manager. Server files, saves, and mods on disk are kept — you can re-add the folder later." />
+          <DeleteOption
+            active={mode === "disk"} onClick={() => setMode("disk")}
+            danger
+            title="Delete profile + server files on disk"
+            desc={`Permanently deletes the entire install folder (${world.install_dir}) including all saves and backups. There is no recovery.`} />
+        </div>
+
+        {withFiles && (
+          <div style={{ marginBottom: "1rem" }}>
+            <label className="label">
+              Type <b style={{ color: "var(--ink)" }}>{world.display_name}</b> to confirm permanent deletion
+            </label>
+            <input className="input" value={confirmName} onChange={(e) => setConfirmName(e.target.value)}
+              placeholder={world.display_name} autoFocus
+              style={{ borderColor: confirmName && !nameOk ? "var(--red)" : undefined }} />
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+          <button className="btn btn-ghost" onClick={onClose} disabled={busy}>Cancel</button>
+          <button className="btn btn-danger" onClick={doDelete} disabled={busy || !nameOk}>
+            <Icon name="trash" size={15} /> {busy ? "Deleting…" : withFiles ? "Delete everything" : "Delete profile"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteOption({ active, danger, title, desc, onClick }) {
+  const accent = danger ? "var(--red)" : "var(--accent)";
+  return (
+    <button onClick={onClick} className="panel-inset" style={{
+      textAlign: "left", padding: "0.8rem 1rem", cursor: "pointer", width: "100%",
+      border: `1px solid ${active ? accent : "var(--line)"}`,
+      borderLeft: `3px solid ${active ? accent : "var(--line)"}`,
+      background: active ? "var(--card-2)" : "transparent",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+        <span style={{
+          width: 16, height: 16, borderRadius: 999, flexShrink: 0,
+          border: `2px solid ${active ? accent : "var(--line-strong)"}`,
+          display: "grid", placeItems: "center",
+        }}>
+          {active && <span style={{ width: 8, height: 8, borderRadius: 999, background: accent }} />}
+        </span>
+        <span className="heading" style={{ fontSize: "0.9rem" }}>{title}</span>
+      </div>
+      <div className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem", marginTop: 4, marginLeft: "1.2rem", wordBreak: "break-word" }}>{desc}</div>
+    </button>
   );
 }
 

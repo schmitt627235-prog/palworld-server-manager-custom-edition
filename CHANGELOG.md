@@ -3,7 +3,31 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.3.1] — 2026-07-09
+## [1.4.0] — 2026-07-09
+
+### Changed
+- **Discord webhooks are now per world.** The single global webhook in Settings
+  moved into a dedicated **Discord** tab on each world, so every server can post
+  start/stop/restart/update alerts and chat relay to its own channel. Each world
+  carries its own webhook, event toggles, and chat-relay switch, with a clear
+  **unsaved-changes** bar so edits are never lost by forgetting to save. The old
+  global Discord setting (and any webhook stored in it) is cleared automatically;
+  Settings now points you to the per-world location.
+- **Safer world deletion.** Deleting a world now opens a dialog that separates
+  *delete profile only* (default — server files kept) from *delete profile +
+  server files on disk*. The destructive option requires typing the world's name
+  to confirm, GitHub-style, so a full on-disk wipe can't happen by accident.
+- **Mod & chat changes require a stopped world.** Adding, enabling/disabling, or
+  removing Steam Workshop mods, UE4SS Lua mods, and the chat relay mod are now
+  disabled while a world is running, with a prompt to stop it first — these only
+  take effect at boot anyway.
+- **Rebranded the sidebar** to the app icon and **PSM** wordmark.
+
+### Fixed
+- **Modals no longer close when selecting text with the mouse.** Dragging a
+  selection inside a dialog (New world, Customize, Delete) and releasing the
+  button outside it used to dismiss the dialog. Backdrop clicks now only close a
+  modal when the press both starts and ends on the backdrop.
 
 ### Added
 - **Usage section — live CPU & memory monitoring.** A new **Usage** entry in the

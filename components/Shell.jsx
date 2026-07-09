@@ -59,10 +59,10 @@ export default function Shell({ children }) {
         <div style={{ height: 56, display: "flex", alignItems: "center", padding: collapsed ? "0" : "0 0.9rem", justifyContent: collapsed ? "center" : "space-between", borderBottom: "1px solid var(--line-strong)", flexShrink: 0 }}>
           {!collapsed && (
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", minWidth: 0 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 10, background: "var(--accent)", display: "grid", placeItems: "center", color: "#fff", flexShrink: 0 }}>
-                <Icon name="globe" size={20} />
+              <div style={{ width: 34, height: 34, borderRadius: 10, overflow: "hidden", display: "grid", placeItems: "center", flexShrink: 0 }}>
+                <img src="/icon.png" alt="PSM" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "0.92rem", whiteSpace: "nowrap" }}>Palworld</span>
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "0.92rem", whiteSpace: "nowrap" }}>PSM</span>
             </div>
           )}
           <button onClick={toggleCollapse} title={collapsed ? "Expand" : "Collapse"}

@@ -111,10 +111,17 @@ export default function Ue4ssPanel({ worldId, running }) {
         </div>
       )}
 
+      {data.installed && running && (
+        <div className="panel-inset" style={{ padding: "0.8rem 1rem", borderLeft: "3px solid var(--red)", marginBottom: "1rem" }}>
+          <span style={{ fontWeight: 700, fontSize: "0.82rem" }}>Stop the world to add, enable/disable, or remove Lua mods.</span>
+          <span className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem" }}> UE4SS only loads mods at boot.</span>
+        </div>
+      )}
+
       {data.installed && (
         <>
           <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1rem", flexWrap: "wrap" }}>
-            <button className="btn btn-primary" disabled={busy} onClick={importMod}><Icon name="upload" /> Import Lua mod (.zip)</button>
+            <button className="btn btn-primary" disabled={busy || running} onClick={importMod}><Icon name="upload" /> Import Lua mod (.zip)</button>
           </div>
 
           {data.mods.length === 0 ? (
@@ -136,10 +143,10 @@ export default function Ue4ssPanel({ worldId, running }) {
                     </div>
                   </div>
                   <button className={`btn ${m.enabled ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
-                    disabled={busy} onClick={() => toggleMod(m.name, !m.enabled)}>
+                    disabled={busy || running} onClick={() => toggleMod(m.name, !m.enabled)}>
                     {m.enabled ? "Enabled" : "Disabled"}
                   </button>
-                  <button className="btn btn-danger" style={{ padding: "0.35rem 0.6rem" }} disabled={busy} onClick={() => removeMod(m.name)}>
+                  <button className="btn btn-danger" style={{ padding: "0.35rem 0.6rem" }} disabled={busy || running} onClick={() => removeMod(m.name)}>
                     <Icon name="trash" size={14} />
                   </button>
                 </div>

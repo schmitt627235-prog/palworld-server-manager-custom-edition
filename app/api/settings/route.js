@@ -4,7 +4,8 @@ const dbm = require("@/lib/db");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const KEYS = ["theme", "discordWebhook", "notifyEvents", "backupRetention", "discordRelayChat", "chatCaptureEnabled"];
+// Discord webhook/notify-events/chat-relay moved to per-world (world Admin tab).
+const KEYS = ["theme", "backupRetention", "chatCaptureEnabled"];
 
 export async function GET() {
   const out = {};
@@ -23,8 +24,6 @@ export async function POST(req) {
 function defaultFor(k) {
   if (k === "theme") return "dark";
   if (k === "backupRetention") return 10;
-  if (k === "notifyEvents") return {};
-  if (k === "discordRelayChat") return false;
   if (k === "chatCaptureEnabled") return true;
   return "";
 }

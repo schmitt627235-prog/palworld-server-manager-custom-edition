@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, Icon, toast } from "@/components/ui";
 
 export default function CreateWorldModal({ onClose, onDone }) {
@@ -234,9 +234,16 @@ function PortField({ label, v, onChange }) {
   );
 }
 export function Overlay({ children, onClose }) {
+  // Only treat it as a backdrop "click" (to close) when the press *started* on the
+  // backdrop itself. Otherwise a text-selection drag that begins inside the modal and
+  // releases outside it would close the modal — see the mousedown target guard below.
+  const downOnBackdrop = useRef(false);
   return (
-    <div onClick={onClose || undefined} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "grid", placeItems: "center", zIndex: 40, padding: "1rem" }}>
-      <div onClick={(e) => e.stopPropagation()}>{children}</div>
+    <div
+      onMouseDown={(e) => { downOnBackdrop.current = e.target === e.currentTarget; }}
+      onClick={(e) => { if (onClose && e.target === e.currentTarget && downOnBackdrop.current) onClose(); }}
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "grid", placeItems: "center", zIndex: 40, padding: "1rem" }}>
+      <div>{children}</div>
     </div>
   );
 }
