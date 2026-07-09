@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 import { Icon, registerToast } from "@/components/ui";
+import { useJobsPoll, summarize, ProgressBar } from "@/components/jobsClient";
 
 const NAV = [
   { href: "/", icon: "grid", label: "Worlds", match: (p) => p === "/" || p.startsWith("/worlds") },
+  { href: "/usage", icon: "activity", label: "Usage", match: (p) => p.startsWith("/usage") },
   { href: "/settings", icon: "settings", label: "Settings", match: (p) => p.startsWith("/settings") },
   { href: "/info", icon: "info", label: "Info", match: (p) => p.startsWith("/info") },
 ];
@@ -16,6 +18,18 @@ export default function Shell({ children }) {
   const path = usePathname();
   const [toasts, setToasts] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
+  const [ver, setVer] = useState(null);
+  const jobs = useJobsPoll();
+  const jobSummary = summarize(jobs);
+
+  useEffect(() => {
+    fetch("/api/app/version").then((r) => r.json()).then(setVer).catch(() => {});
+  }, []);
+
+  const openRelease = () => {
+    const url = ver?.releaseUrl;
+    if (url) { try { window.open(url, "_blank"); } catch {} }
+  };
 
   useEffect(() => {
     // restore collapse preference
@@ -69,26 +83,48 @@ export default function Shell({ children }) {
           {NAV.map((n) => (
             <NavItem key={n.href} {...n} active={n.match(path)} collapsed={collapsed} />
           ))}
+          <DownloadsNavItem active={path.startsWith("/downloads")} collapsed={collapsed} summary={jobSummary} />
         </div>
 
-        {/* footer: user + theme */}
+        {/* footer: app version / update + theme */}
         <div style={{ padding: "0.55rem", borderTop: "1px solid var(--line-strong)", flexShrink: 0 }}>
+          {!collapsed && ver?.updateAvailable && (
+            <button onClick={openRelease} title="Open the latest release to download"
+              style={{
+                width: "100%", marginBottom: "0.5rem", padding: "0.45rem 0.6rem", borderRadius: 8,
+                background: "var(--accent)", color: "#fff", border: "none", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: "0.45rem", fontWeight: 700, fontSize: "0.78rem",
+              }}>
+              <Icon name="download" size={15} />
+              <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                Update available — v{ver.latest}
+              </span>
+            </button>
+          )}
           <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", justifyContent: collapsed ? "center" : "space-between" }}>
             {!collapsed && (
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", minWidth: 0 }}>
-                <div style={{ width: 30, height: 30, borderRadius: 999, background: "var(--accent)", display: "grid", placeItems: "center", color: "#fff", fontSize: "0.8rem", fontWeight: 800, flexShrink: 0 }}>P</div>
-                <div style={{ lineHeight: 1.1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: "0.8rem", whiteSpace: "nowrap" }}>Admin</div>
-                  <div className="subtle" style={{ fontSize: "0.66rem" }}>local</div>
+              <div style={{ lineHeight: 1.1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: "0.78rem", whiteSpace: "nowrap" }}>
+                  Palworld Server Manager
+                </div>
+                <div className="subtle" style={{ fontSize: "0.68rem" }}>
+                  v{ver?.current || "—"}{ver && !ver.updateAvailable && ver.checked ? " · up to date" : ""}
                 </div>
               </div>
             )}
-            <button onClick={toggle} title="Toggle theme"
-              style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--ink-soft)", padding: 7, borderRadius: 8, display: "grid", placeItems: "center", transition: "background 0.15s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--line)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-              <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
-            </button>
+            {collapsed && ver?.updateAvailable ? (
+              <button onClick={openRelease} title={`Update available — v${ver.latest}`}
+                style={{ background: "var(--accent)", border: "none", cursor: "pointer", color: "#fff", padding: 7, borderRadius: 8, display: "grid", placeItems: "center" }}>
+                <Icon name="download" size={18} />
+              </button>
+            ) : (
+              <button onClick={toggle} title="Toggle theme"
+                style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--ink-soft)", padding: 7, borderRadius: 8, display: "grid", placeItems: "center", transition: "background 0.15s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--line)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -133,6 +169,47 @@ function NavItem({ href, icon, label, active, collapsed }) {
     >
       <Icon name={icon} size={20} />
       {!collapsed && <span style={{ whiteSpace: "nowrap" }}>{label}</span>}
+    </Link>
+  );
+}
+
+// Sidebar "Downloads" entry — a permanent nav item that shows a live count and
+// aggregate progress while installs/updates run, and links to the Downloads page.
+function DownloadsNavItem({ active, collapsed, summary }) {
+  const { activeCount, percent, anyError } = summary;
+  const busy = activeCount > 0;
+  const dotColor = anyError ? "var(--red)" : "var(--accent)";
+
+  return (
+    <Link href="/downloads" title={collapsed ? `Downloads${busy ? ` (${activeCount})` : ""}` : undefined}
+      style={{
+        display: "block", padding: collapsed ? "0.6rem" : "0.55rem 0.6rem", borderRadius: 8,
+        textDecoration: "none", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "0.9rem",
+        marginBottom: 3, marginTop: 2,
+        background: active ? "var(--accent)" : "transparent",
+        color: active ? "#fff" : "var(--ink-soft)",
+        transition: "background 0.15s, color 0.15s",
+      }}
+      onMouseEnter={(e) => { if (!active) { e.currentTarget.style.background = "var(--card-2)"; e.currentTarget.style.color = "var(--ink)"; } }}
+      onMouseLeave={(e) => { if (!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--ink-soft)"; } }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", justifyContent: collapsed ? "center" : "flex-start", position: "relative" }}>
+        <span style={{ position: "relative", display: "grid", placeItems: "center" }}>
+          <Icon name="download" size={20} />
+          {busy && (
+            <span className="animate-pulseDot" style={{ position: "absolute", top: -3, right: -4, width: 8, height: 8, borderRadius: 999, background: dotColor, border: "1.5px solid var(--sidebar)" }} />
+          )}
+        </span>
+        {!collapsed && <span style={{ whiteSpace: "nowrap", flex: 1 }}>Downloads</span>}
+        {!collapsed && busy && (
+          <span className="chip" style={{ background: active ? "rgba(255,255,255,0.2)" : "var(--card-2)", fontSize: "0.7rem", fontWeight: 800, padding: "0.05rem 0.4rem" }}>
+            {activeCount}
+          </span>
+        )}
+      </div>
+      {!collapsed && busy && (
+        <ProgressBar percent={percent} style={{ marginTop: "0.5rem", height: 5 }} />
+      )}
     </Link>
   );
 }

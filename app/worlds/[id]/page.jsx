@@ -10,6 +10,7 @@ import SettingsEditor from "@/components/SettingsEditor";
 import BackupsPanel from "@/components/BackupsPanel";
 import SchedulePanel from "@/components/SchedulePanel";
 import ModsPanel from "@/components/ModsPanel";
+import Ue4ssPanel from "@/components/Ue4ssPanel";
 import AdminPanel from "@/components/AdminPanel";
 import ChatPanel from "@/components/ChatPanel";
 
@@ -56,11 +57,12 @@ export default function WorldDetail() {
 
   const doUpdate = async () => {
     setBusy("update");
-    toast("Updating — this can take a while…");
     try {
-      const r = await api(`/api/worlds/${id}/update`, { method: "POST" });
-      toast(r.result?.ok ? `Updated to build ${r.result.build}` : `Update failed: ${r.result?.error}`, r.result?.ok ? "success" : "error");
-      load();
+      await api(`/api/worlds/${id}/update`, { method: "POST" });
+      try { window.__palJobsPing?.(); } catch {}
+      toast("Update started — track progress in the downloads tray", "success");
+      // reflect status changes as the background job runs
+      setTimeout(load, 1200);
     } catch (e) { toast(e.message, "error"); }
     finally { setBusy(null); }
   };
@@ -118,7 +120,7 @@ export default function WorldDetail() {
             ) : (
               <button className="btn btn-primary" disabled={busy} onClick={() => act("start")}><Icon name="play" /> {busy === "start" ? "Starting…" : "Start"}</button>
             )}
-            <button className="btn btn-amber" disabled={busy || running} onClick={doUpdate}><Icon name="download" /> {busy === "update" ? "Updating…" : "Update"}</button>
+            <button className="btn btn-amber" disabled={busy || running || world.status === "updating"} onClick={doUpdate}><Icon name="download" /> {busy === "update" || world.status === "updating" ? "Updating…" : "Update"}</button>
           </div>
         </div>
 
@@ -154,7 +156,17 @@ export default function WorldDetail() {
         {tab === "settings" && <SettingsEditor worldId={id} running={running} />}
         {tab === "backups" && <BackupsPanel worldId={id} backups={backups} running={running} onChange={load} />}
         {tab === "schedule" && <SchedulePanel worldId={id} schedules={schedules} onChange={load} />}
-        {tab === "mods" && <ModsPanel worldId={id} running={running} />}
+        {tab === "mods" && (
+          <div style={{ display: "grid", gap: "1.8rem" }}>
+            <div>
+              <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Steam Workshop mods</h3>
+              <ModsPanel worldId={id} running={running} />
+            </div>
+            <div style={{ borderTop: "1px solid var(--line)", paddingTop: "1.4rem" }}>
+              <Ue4ssPanel worldId={id} running={running} />
+            </div>
+          </div>
+        )}
         {tab === "admin" && <AdminPanel world={world} running={running} onChange={load} />}
       </div>
 
