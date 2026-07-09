@@ -86,14 +86,30 @@ local function channel_name(cat)
     return "Global"
 end
 
+-- The same chat event can reach us through more than one hooked function; collapse
+-- identical name+message within the same second so we don't double-log.
+local last_sig, last_t = nil, 0
+local function should_emit(name, text)
+    local sig = name .. "\1" .. text
+    local t = os.time()
+    if sig == last_sig and (t - last_t) < 2 then return false end
+    last_sig, last_t = sig, t
+    return true
+end
+
+-- Extract sender/channel/message from an FPalChatMessage struct param (used by both
+-- EnterChat_Receive and BroadcastChatMessage) and append it.
 local function on_chat(self, chat_message_param)
     local ok = pcall(function()
+        if chat_message_param == nil then return end
         local msg = chat_message_param:get()
+        if msg == nil then return end
         local text = to_str(msg.Message)
         if text == "" then return end
         local name = to_str(msg.SenderName)
         if name == "" then name = to_str(msg.SenderPlayerName) end
         if name == "" then name = "Player" end
+        if not should_emit(name, text) then return end
         append_line(name, channel_name(msg.Category), text)
     end)
     if not ok then
@@ -101,8 +117,21 @@ local function on_chat(self, chat_message_param)
     end
 end
 
-RegisterHook("/Script/Pal.PalGameStateInGame:BroadcastChatMessage", on_chat)
+-- Register on the inbound player-chat path (proven to fire on dedicated servers — the
+-- AdminCommands mod uses the same hook) and also on the outbound broadcast as a
+-- fallback. RegisterHook may throw if a function name is absent on this build, so wrap
+-- each one independently.
+local HOOKS = {
+    "/Script/Pal.PalPlayerState:EnterChat_Receive",
+    "/Script/Pal.PalGameStateInGame:BroadcastChatMessage",
+}
+local hooked = {}
+for _, fn in ipairs(HOOKS) do
+    local ok = pcall(RegisterHook, fn, on_chat)
+    if ok then hooked[#hooked + 1] = fn end
+end
 
 -- Resolve the output path eagerly so any path problems surface in UE4SS.log at load.
 resolve_out_path()
-print("[PSMChatRelay] loaded — hooking BroadcastChatMessage\n")
+print(string.format("[PSMChatRelay] loaded — hooked %d chat function(s): %s\n",
+    #hooked, table.concat(hooked, ", ")))
