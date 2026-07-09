@@ -87,6 +87,21 @@ export default function SettingsPage() {
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>In-game chat capture</h3>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <button className={`btn ${s.chatCaptureEnabled !== false ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
+            onClick={() => save({ chatCaptureEnabled: !(s.chatCaptureEnabled !== false) })} disabled={saving}>
+            {s.chatCaptureEnabled !== false ? "On" : "Off"}
+          </button>
+          <span className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem" }}>
+            Capture in-game chat via the UE4SS relay mod. Turn this off to stop the app from
+            reading chat entirely. If a Palworld update ever makes the mod misbehave, also use
+            <b> Remove chat mod</b> on each world&apos;s Chat tab to take the mod off the server.
+          </span>
+        </div>
+      </div>
+
+      <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
         <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Backups</h3>
         <label className="label">Keep last N backups per world</label>
         <div style={{ display: "flex", gap: "0.5rem", maxWidth: 260 }}>
