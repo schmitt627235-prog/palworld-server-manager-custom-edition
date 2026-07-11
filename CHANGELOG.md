@@ -3,6 +3,34 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] — 2026-07-12
+
+### Added
+- **Steam Workshop mods on any drive.** PSM now auto-detects every Steam library on
+  the machine — reading the Steam registry entries and each `libraryfolders.vdf` — so
+  a Workshop mod you've subscribed to is found no matter which drive Steam is
+  installed on, not just `C:`. The Mods tab gained a **Steam library location**
+  control that lists the detected libraries and lets you point at a specific folder
+  (with a picker) if your setup is unusual.
+
+### Fixed
+- **Workshop server mods are now correctly detected.** A mod's `Info.json`
+  `InstallRule` is an array of per-target rules, but PSM read it as a single object —
+  so every mod was wrongly flagged **"not a server mod"** and its enable toggle was
+  locked. Any rule with `IsServer: true` now correctly marks a mod as server-side,
+  and the mod's real `ModName` is shown.
+- **Enabling a mod no longer corrupts `PalModSettings.ini`.** The reader matched
+  `WorkshopRootDir` across line breaks, so an empty value swallowed the following
+  line (e.g. `ConfigVersion=1.0`) and wrote a malformed file on the next save.
+  Parsing is now strictly line-based and `ConfigVersion` is preserved.
+- **Workshop *Lua* mods now actually load.** Palworld deploys Workshop Lua mods to
+  `Mods/NativeMods/UE4SS/Mods`, which the bundled UE4SS (at
+  `Pal/Binaries/Win64/ue4ss`) never scans — so most Workshop mods silently did
+  nothing even after being enabled and deployed. Enabling a Lua-type Workshop mod now
+  bridges its scripts into the running UE4SS mods folder (and tears them down on
+  disable/remove), so it loads on the next server restart. Pak-only mods are
+  unaffected.
+
 ## [1.5.0] — 2026-07-10
 
 ### Added

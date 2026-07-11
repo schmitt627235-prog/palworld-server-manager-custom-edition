@@ -50,6 +50,22 @@ export default function ModsPanel({ worldId, running }) {
     } catch (e) { toast(e.message, "error"); } finally { setBusy(false); }
   };
 
+  // Point PSM at the Steam library where Workshop content lives (for setups where
+  // Steam isn't on C:). Saved machine-wide, so every future add finds mods on its own.
+  const setSteamLibrary = async (path) => {
+    setBusy(true);
+    try {
+      setData(await api(`/api/worlds/${worldId}/mods/steam-library`, { method: "POST", body: { path: path || null } }));
+      toast(path ? "Steam library saved" : "Steam library reset to auto-detect", "success");
+    } catch (e) { toast(e.message, "error"); } finally { setBusy(false); }
+  };
+
+  const pickSteamLibrary = async () => {
+    if (!isElectron) return toast("Folder picker is available in the desktop app.");
+    const dir = await window.desktop.pickDirectory();
+    if (dir) setSteamLibrary(dir);
+  };
+
   const removeMod = async (pkg) => {
     if (!confirm(`Remove mod "${pkg}"? Its files will be deleted.`)) return;
     setBusy(true);
@@ -96,6 +112,37 @@ export default function ModsPanel({ worldId, running }) {
           <input className="input" placeholder="Steam Workshop ID (already downloaded in Steam)" value={wsId} onChange={(e) => setWsId(e.target.value)} disabled={running} />
           <button className="btn btn-subtle" disabled={busy || running} onClick={addWorkshop}>Add</button>
         </div>
+      </div>
+
+      {/* Steam library location — where subscribed Workshop content is found. Auto-detected
+          across drives; overridable for setups where Steam isn't on C:. */}
+      <div className="panel-inset" style={{ padding: "0.8rem 0.95rem", marginBottom: "1.2rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ minWidth: 200, flex: 1 }}>
+            <div className="heading" style={{ fontSize: "0.9rem" }}>Steam library location</div>
+            <div className="subtle" style={{ fontSize: "0.76rem", fontWeight: 600, wordBreak: "break-all" }}>
+              {data.steamLibraryPath
+                ? <>Using saved folder: <code>{data.steamLibraryPath}</code></>
+                : data.steamLibrariesDetected?.length
+                  ? <>Auto-detected {data.steamLibrariesDetected.length} Steam {data.steamLibrariesDetected.length === 1 ? "library" : "libraries"}. Set a folder only if your mods aren&apos;t found.</>
+                  : <>No Steam install auto-detected. If Steam isn&apos;t on C:, set your Steam (or SteamLibrary) folder here.</>}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "0.4rem" }}>
+            <button className="btn btn-ghost" disabled={busy} onClick={pickSteamLibrary}><Icon name="folder" size={14} /> {data.steamLibraryPath ? "Change" : "Set folder"}</button>
+            {data.steamLibraryPath && <button className="btn btn-subtle" disabled={busy} onClick={() => setSteamLibrary(null)}>Reset</button>}
+          </div>
+        </div>
+        {data.steamLibrariesDetected?.length > 0 && (
+          <details style={{ marginTop: "0.5rem" }}>
+            <summary className="subtle" style={{ fontSize: "0.72rem", fontWeight: 700, cursor: "pointer" }}>Detected libraries</summary>
+            <ul style={{ margin: "0.4rem 0 0", paddingLeft: "1.1rem" }}>
+              {data.steamLibrariesDetected.map((p) => (
+                <li key={p} className="subtle" style={{ fontSize: "0.72rem", fontWeight: 600, wordBreak: "break-all" }}><code>{p}</code></li>
+              ))}
+            </ul>
+          </details>
+        )}
       </div>
 
       {/* installed mods list */}
