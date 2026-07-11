@@ -6,6 +6,7 @@ export default function ModsPanel({ worldId, running }) {
   const [data, setData] = useState(null);
   const [busy, setBusy] = useState(false);
   const [wsId, setWsId] = useState("");
+  const [showWsHelp, setShowWsHelp] = useState(false);
   const isElectron = typeof window !== "undefined" && window.desktop?.isElectron;
   const isWindows = typeof navigator !== "undefined" && /Win/.test(navigator.platform);
 
@@ -108,11 +109,16 @@ export default function ModsPanel({ worldId, running }) {
 
       <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1.2rem", flexWrap: "wrap" }}>
         <button className="btn btn-primary" disabled={busy || running} onClick={importZip}><Icon name="upload" /> Import mod (.zip)</button>
-        <div style={{ display: "flex", gap: "0.4rem", flex: 1, minWidth: 240 }}>
+        <div style={{ display: "flex", gap: "0.4rem", flex: 1, minWidth: 240, alignItems: "center" }}>
           <input className="input" placeholder="Steam Workshop ID (already downloaded in Steam)" value={wsId} onChange={(e) => setWsId(e.target.value)} disabled={running} />
           <button className="btn btn-subtle" disabled={busy || running} onClick={addWorkshop}>Add</button>
+          <button className="btn btn-ghost" style={{ padding: "0.4rem 0.5rem" }} title="How to find a Workshop ID" aria-label="How to find a Workshop ID" onClick={() => setShowWsHelp(true)}>
+            <Icon name="info" size={16} />
+          </button>
         </div>
       </div>
+
+      {showWsHelp && <WorkshopHelpModal onClose={() => setShowWsHelp(false)} />}
 
       {/* Steam library location — where subscribed Workshop content is found. Auto-detected
           across drives; overridable for setups where Steam isn't on C:. */}
@@ -193,6 +199,45 @@ function Notice({ color, children }) {
   return (
     <div className="panel-inset" style={{ padding: "0.7rem 0.9rem", borderLeft: `3px solid ${color}`, marginBottom: "1rem", fontWeight: 600, fontSize: "0.84rem" }}>
       {children}
+    </div>
+  );
+}
+
+// How-to for the Workshop ID field: getting an item's numeric id, and the fact that
+// PSM can only add mods Steam has already downloaded (subscribe first) — otherwise
+// use the .zip import instead.
+function WorkshopHelpModal({ onClose }) {
+  return (
+    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="panel animate-floatUp" style={{ width: 520, maxWidth: "94vw", maxHeight: "90vh", overflow: "auto", padding: "1.4rem 1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.9rem" }}>
+          <div className="heading" style={{ fontSize: "1.05rem", display: "flex", alignItems: "center", gap: 8 }}>
+            <Icon name="info" size={18} /> Adding a Steam Workshop mod
+          </div>
+          <button className="btn btn-ghost" style={{ padding: "0.35rem 0.5rem" }} onClick={onClose} aria-label="Close"><Icon name="x" size={16} /></button>
+        </div>
+
+        <p style={{ fontSize: "0.86rem", fontWeight: 600, marginBottom: "0.9rem", lineHeight: 1.5 }}>
+          PSM adds a Workshop mod from the copy <b>Steam has already downloaded</b> on this PC — it
+          doesn&apos;t download it for you. So the order is: subscribe in Steam first, then add it here by its ID.
+        </p>
+
+        <ol style={{ margin: "0 0 1rem", paddingLeft: "1.2rem", display: "grid", gap: "0.55rem", fontSize: "0.84rem", fontWeight: 600, lineHeight: 1.5 }}>
+          <li><b>Subscribe in Steam.</b> Open the mod on the Palworld Steam Workshop and click <b>Subscribe</b>. Steam downloads it into your Steam library&apos;s workshop folder.</li>
+          <li><b>Copy its Workshop ID.</b> It&apos;s the number at the end of the mod&apos;s URL —
+            <code style={{ wordBreak: "break-all" }}>steamcommunity.com/sharedfiles/filedetails/?id=<b>1234567890</b></code>. The bold number is the ID.</li>
+          <li><b>Paste the ID</b> into the field and click <b>Add</b>. PSM finds it across your Steam libraries (any drive) and installs it into this world.</li>
+        </ol>
+
+        <div className="panel-inset" style={{ padding: "0.7rem 0.9rem", borderLeft: "3px solid var(--accent)", fontSize: "0.82rem", fontWeight: 600, lineHeight: 1.5 }}>
+          No Steam copy? Use <b>Import mod (.zip)</b> instead — pick a mod archive that contains an
+          <code> Info.json</code> and PSM will install it directly, no subscription needed.
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1.1rem" }}>
+          <button className="btn btn-primary" onClick={onClose}>Got it</button>
+        </div>
+      </div>
     </div>
   );
 }

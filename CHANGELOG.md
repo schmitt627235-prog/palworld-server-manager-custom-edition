@@ -12,6 +12,9 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   installed on, not just `C:`. The Mods tab gained a **Steam library location**
   control that lists the detected libraries and lets you point at a specific folder
   (with a picker) if your setup is unusual.
+- **Workshop ID help.** An **info** button next to *Add* opens a short guide: how to
+  find a mod's Workshop ID (the number in its Steam URL), that the mod must be
+  subscribed/downloaded in Steam first, and to use *Import mod (.zip)* otherwise.
 
 ### Fixed
 - **Workshop server mods are now correctly detected.** A mod's `Info.json`
