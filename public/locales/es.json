@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "code": "es",
+    "name": "Spanish",
+    "nativeName": "Español",
+    "dir": "ltr",
+    "schema": 1,
+    "authors": ["Palworld Server Manager"]
+  },
+  "strings": {
+    "nav.worlds": "Mundos",
+    "nav.usage": "Uso",
+    "nav.settings": "Ajustes",
+    "nav.info": "Información",
+    "nav.downloads": "Descargas",
+    "sidebar.management": "Gestión",
+    "app.name": "Palworld Server Manager",
+    "app.updateAvailable": "Actualización disponible — v{{version}}",
+    "app.upToDate": "actualizado",
+    "action.toggleTheme": "Cambiar tema",
+    "action.expand": "Expandir",
+    "action.collapse": "Contraer"
+  }
+}

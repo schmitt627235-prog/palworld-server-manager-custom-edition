@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "code": "en",
+    "name": "English",
+    "nativeName": "English",
+    "dir": "ltr",
+    "schema": 1,
+    "authors": ["Palworld Server Manager"]
+  },
+  "strings": {
+    "nav.worlds": "Worlds",
+    "nav.usage": "Usage",
+    "nav.settings": "Settings",
+    "nav.info": "Info",
+    "nav.downloads": "Downloads",
+    "sidebar.management": "Management",
+    "app.name": "Palworld Server Manager",
+    "app.updateAvailable": "Update available — v{{version}}",
+    "app.upToDate": "up to date",
+    "action.toggleTheme": "Toggle theme",
+    "action.expand": "Expand",
+    "action.collapse": "Collapse"
+  }
+}
