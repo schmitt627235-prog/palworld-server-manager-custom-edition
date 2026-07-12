@@ -328,6 +328,30 @@
     "broadcast.footerModOff": "Los anuncios se envían actualmente como aviso REST de Palworld (en el chat). Instala arriba el mod de anuncios en pantalla para mostrarlos en la pantalla de los jugadores.",
     "broadcast.firing": "enviando…",
     "broadcast.inTime": "en {{time}}",
-    "broadcast.inDaysTime": "en {{days}}d {{time}}"
+    "broadcast.inDaysTime": "en {{days}}d {{time}}",
+
+    "info.title": "Información y guías",
+    "info.subtitle": "Ayuda opcional para sacar el máximo partido a tu servidor.",
+    "info.guideInternetTitle": "Cómo alojar tu servidor en internet",
+    "info.guideInternetSubtitle": "Haz que cualquiera pueda unirse a tu mundo — gratis, sin reenvío de puertos",
+    "info.whatIsPlayit": "¿Qué es playit.gg?",
+    "info.whatIsPlayitDesc": "Un servicio de túnel gratuito que da a tu servidor local una dirección pública, para que tus amigos puedan unirse por internet sin reenvío de puertos ni cambios en el router. Es una recomendación, no un requisito — si ya tienes el reenvío de puertos configurado, no lo necesitas.",
+    "info.openPlayit": "Abrir playit.gg",
+    "info.step1Title": "Descarga el agente",
+    "info.step1": "Ve a playit.gg, crea una cuenta gratuita y descarga el <b>agente de playit</b> para Windows.",
+    "info.step2Title": "Configura el agente",
+    "info.step2": "Ejecuta el agente descargado e inicia sesión / vincúlalo a tu cuenta cuando se abra el navegador. Déjalo en ejecución.",
+    "info.step3Title": "Crea un túnel",
+    "info.step3": "En el panel de playit.gg, añade un nuevo <b>túnel</b>.",
+    "info.step4Title": "Elige el tipo de túnel: UDP (gratis)",
+    "info.step4": "Palworld usa UDP. Elige el tipo de túnel <b>UDP</b> en el plan gratuito.",
+    "info.step5Title": "Fija el número de puertos = 1",
+    "info.step5": "Solo necesitas un puerto para un mundo, así que fija la asignación de puertos en <b>1</b>.",
+    "info.step6Title": "Rellena los datos locales",
+    "info.step6Intro": "Apunta el túnel a tu máquina:",
+    "info.step6LocalIp": "<b>IP local:</b> <code>127.0.0.1</code>",
+    "info.step6LocalPort": "<b>Puerto local:</b> el puerto del juego de tu mundo (p. ej. <code>8211</code> — se muestra en la página del mundo)",
+    "info.step7Title": "Obtén tu dirección pública",
+    "info.step7": "playit.gg te da una <b>IP y puerto públicos</b>. Compártelos con tus amigos — en Palworld usan <b>Multijugador → Conectar por IP</b> y los pegan. ¡Listo!"
   }
 }
