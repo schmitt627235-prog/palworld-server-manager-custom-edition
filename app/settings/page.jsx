@@ -16,6 +16,8 @@ export default function SettingsPage() {
   const [backupPath, setBackupPath] = useState("");
   const [langs, setLangs] = useState([]);
   const [switching, setSwitching] = useState(false);
+  const [packBusy, setPackBusy] = useState(false);
+  const [packUrl, setPackUrl] = useState("");
   const isElectron = typeof window !== "undefined" && window.desktop?.isElectron;
 
   useEffect(() => {
@@ -34,6 +36,54 @@ export default function SettingsPage() {
       setS((prev) => (prev ? { ...prev, language: code } : prev));
     } catch (e) { toast(e.message, "error"); }
     finally { setSwitching(false); }
+  };
+
+  const refreshLangs = () => api("/api/i18n/languages").then((r) => setLangs(r.languages || [])).catch(() => {});
+
+  // After a new pack lands, pull it into the live i18next instance so its strings are
+  // usable immediately (and switch to it if the user just added the active language).
+  const afterPackAdded = async (language) => {
+    await refreshLangs();
+    if (language?.code) {
+      try { await switchLanguage(language.code, language.dir || "ltr"); setS((prev) => (prev ? { ...prev, language: language.code } : prev)); } catch {}
+    }
+  };
+
+  const importPack = async (e) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setPackBusy(true);
+    try {
+      const content = await file.text();
+      const r = await api("/api/i18n/import", { method: "POST", body: { content } });
+      toast(t("language.imported", { name: r.language?.nativeName || r.language?.code || "" }), "success");
+      await afterPackAdded(r.language);
+    } catch (err) { toast(err.message || t("language.readError"), "error"); }
+    finally { setPackBusy(false); e.target.value = ""; }
+  };
+
+  const downloadPack = async () => {
+    if (!packUrl.trim()) return;
+    setPackBusy(true);
+    try {
+      const r = await api("/api/i18n/download", { method: "POST", body: { url: packUrl.trim() } });
+      toast(t("language.imported", { name: r.language?.nativeName || r.language?.code || "" }), "success");
+      setPackUrl("");
+      await afterPackAdded(r.language);
+    } catch (err) { toast(err.message, "error"); }
+    finally { setPackBusy(false); }
+  };
+
+  const removePack = async (lang) => {
+    if (!confirm(t("language.confirmRemove", { name: lang.nativeName || lang.code }))) return;
+    setPackBusy(true);
+    try {
+      const r = await api(`/api/i18n/import?code=${encodeURIComponent(lang.code)}`, { method: "DELETE" });
+      setLangs(r.languages || []);
+      toast(t("language.removed"), "success");
+      // If the removed pack was active, fall back to English.
+      if (i18n.language === lang.code) { await switchLanguage("en", "ltr"); setS((prev) => (prev ? { ...prev, language: "en" } : prev)); }
+    } catch (err) { toast(err.message, "error"); }
+    finally { setPackBusy(false); }
   };
 
   const saveBackupDir = async (p) => {
@@ -100,6 +150,44 @@ export default function SettingsPage() {
             <p className="subtle" style={{ fontWeight: 600, fontSize: "0.72rem", margin: "0.5rem 0 0" }}>{t("settings.languagePartial")}</p>
           ) : null;
         })()}
+
+        {/* Import / download community packs */}
+        <div style={{ marginTop: "1.1rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
+          <div className="heading" style={{ fontSize: "0.92rem" }}>{t("language.addPackTitle")}</div>
+          <p className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem", margin: "0.2rem 0 0.7rem" }}>{t("language.addPackDesc")}</p>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+            <label className="btn btn-ghost" style={{ cursor: packBusy ? "default" : "pointer" }}>
+              <Icon name="upload" size={15} /> {packBusy ? t("language.importing") : t("language.importFile")}
+              <input type="file" accept=".json,application/json" hidden disabled={packBusy} onChange={importPack} />
+            </label>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
+            <input className="input" style={{ flex: 1, minWidth: 220 }} placeholder={t("language.downloadUrlPlaceholder")}
+              value={packUrl} onChange={(e) => setPackUrl(e.target.value)} disabled={packBusy}
+              onKeyDown={(e) => e.key === "Enter" && downloadPack()} />
+            <button className="btn btn-primary" onClick={downloadPack} disabled={packBusy || !packUrl.trim()}>
+              <Icon name="globe" size={15} /> {packBusy ? t("language.downloading") : t("language.download")}
+            </button>
+          </div>
+
+          {langs.some((l) => l.custom) && (
+            <div style={{ marginTop: "0.9rem" }}>
+              <label className="label">{t("language.yourPacks")}</label>
+              <div style={{ display: "grid", gap: "0.4rem" }}>
+                {langs.filter((l) => l.custom).map((l) => (
+                  <div key={l.code} className="panel-inset" style={{ padding: "0.5rem 0.7rem", display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+                    <span style={{ fontWeight: 800, fontSize: "0.84rem" }}>{l.nativeName}</span>
+                    <span className="subtle" style={{ fontWeight: 700, fontSize: "0.72rem" }}>{l.code} · {t("language.completeness", { percent: l.completeness })}</span>
+                    <button className="btn btn-ghost" style={{ marginLeft: "auto", padding: "0.25rem 0.55rem", fontSize: "0.74rem" }}
+                      onClick={() => removePack(l)} disabled={packBusy}>
+                      <Icon name="trash" size={13} /> {t("language.remove")}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
