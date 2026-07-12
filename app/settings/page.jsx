@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useTheme } from "@/components/ThemeProvider";
 import { switchLanguage } from "@/lib/i18n/client";
 import { api, Icon, toast } from "@/components/ui";
@@ -42,7 +42,7 @@ export default function SettingsPage() {
       const r = await api("/api/settings/backup-dir", { method: "POST", body: { path: p } });
       setBackupLoc(r.backup);
       setBackupPath(r.backup.custom ? r.backup.path : "");
-      toast(r.backup.custom ? "Backup location updated" : "Reset to default location", "success");
+      toast(r.backup.custom ? t("settings.backupLocationUpdated") : t("settings.backupLocationReset"), "success");
     } catch (e) { toast(e.message, "error"); }
     finally { setSaving(false); }
   };
@@ -58,23 +58,23 @@ export default function SettingsPage() {
     try {
       const r = await api("/api/settings", { method: "POST", body: patch });
       setS(r.settings);
-      toast("Saved", "success");
+      toast(t("settings.saved"), "success");
     } catch (e) { toast(e.message, "error"); }
     finally { setSaving(false); }
   };
 
-  if (!s) return <div className="subtle" style={{ fontWeight: 700 }}>Loading…</div>;
+  if (!s) return <div className="subtle" style={{ fontWeight: 700 }}>{t("common.loading")}</div>;
 
   return (
     <div>
-      <h1 className="heading" style={{ fontSize: "1.9rem", margin: "0 0 1.2rem" }}>Settings</h1>
+      <h1 className="heading" style={{ fontSize: "1.9rem", margin: "0 0 1.2rem" }}>{t("settings.title")}</h1>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
-        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Appearance</h3>
-        <label className="label">Theme</label>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>{t("settings.appearance")}</h3>
+        <label className="label">{t("settings.theme")}</label>
         <div style={{ display: "flex", gap: "0.6rem" }}>
-          <button className={`btn ${theme === "light" ? "btn-primary" : "btn-ghost"}`} onClick={() => setTheme("light")}><Icon name="sun" /> Light</button>
-          <button className={`btn ${theme === "dark" ? "btn-primary" : "btn-ghost"}`} onClick={() => setTheme("dark")}><Icon name="moon" /> Dark</button>
+          <button className={`btn ${theme === "light" ? "btn-primary" : "btn-ghost"}`} onClick={() => setTheme("light")}><Icon name="sun" /> {t("settings.light")}</button>
+          <button className={`btn ${theme === "dark" ? "btn-primary" : "btn-ghost"}`} onClick={() => setTheme("dark")}><Icon name="moon" /> {t("settings.dark")}</button>
         </div>
       </div>
 
@@ -103,77 +103,73 @@ export default function SettingsPage() {
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
-        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Discord notifications</h3>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>{t("settings.discordTitle")}</h3>
         <div className="panel-inset" style={{ padding: "0.9rem 1.1rem", borderLeft: "3px solid var(--yellow)" }}>
-          <div style={{ fontWeight: 800, fontSize: "0.9rem", marginBottom: 4 }}>This moved into each world</div>
+          <div style={{ fontWeight: 800, fontSize: "0.9rem", marginBottom: 4 }}>{t("settings.discordMoved")}</div>
           <p className="subtle" style={{ fontWeight: 600, fontSize: "0.8rem", margin: 0 }}>
-            Discord webhooks are now set <b>per world</b>, so each server can post to its own channel.
-            Open a world → <b>Discord</b> tab to add its webhook, choose which events to announce, and
-            toggle chat relay. Any webhook you had here before has been cleared.
+            <Trans i18nKey="settings.discordMovedDesc" components={{ b: <b /> }} />
           </p>
           <Link href="/" className="btn btn-primary" style={{ marginTop: "0.8rem", padding: "0.35rem 0.7rem" }}>
-            <Icon name="globe" size={15} /> Go to your worlds
+            <Icon name="globe" size={15} /> {t("settings.goToWorlds")}
           </Link>
         </div>
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
-        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>In-game chat capture</h3>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>{t("settings.chatCaptureTitle")}</h3>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           <button className={`btn ${s.chatCaptureEnabled !== false ? "btn-primary" : "btn-ghost"}`} style={{ padding: "0.35rem 0.7rem" }}
             onClick={() => save({ chatCaptureEnabled: !(s.chatCaptureEnabled !== false) })} disabled={saving}>
-            {s.chatCaptureEnabled !== false ? "On" : "Off"}
+            {s.chatCaptureEnabled !== false ? t("common.on") : t("common.off")}
           </button>
           <span className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem" }}>
-            Capture in-game chat via the UE4SS relay mod. Turn this off to stop the app from
-            reading chat entirely. If a Palworld update ever makes the mod misbehave, also use
-            <b> Remove chat mod</b> on each world&apos;s Chat tab to take the mod off the server.
+            <Trans i18nKey="settings.chatCaptureDesc" components={{ b: <b /> }} />
           </span>
         </div>
       </div>
 
       <div className="panel" style={{ padding: "1.3rem", marginBottom: "1rem" }}>
-        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>Backups</h3>
-        <label className="label">Keep last N backups per world</label>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>{t("settings.backupsTitle")}</h3>
+        <label className="label">{t("settings.keepLastN")}</label>
         <div style={{ display: "flex", gap: "0.5rem", maxWidth: 260 }}>
           <input className="input" type="number" min="1" value={s.backupRetention ?? 10} onChange={(e) => setS({ ...s, backupRetention: Number(e.target.value) })} />
-          <button className="btn btn-primary" onClick={() => save({ backupRetention: s.backupRetention })} disabled={saving}>Save</button>
+          <button className="btn btn-primary" onClick={() => save({ backupRetention: s.backupRetention })} disabled={saving}>{t("common.save")}</button>
         </div>
 
         {backupLoc && (
           <div style={{ marginTop: "1.1rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
-            <label className="label">Backup location</label>
+            <label className="label">{t("settings.backupLocation")}</label>
             <p className="subtle" style={{ fontWeight: 600, fontSize: "0.78rem", margin: "0 0 0.5rem" }}>
-              Backups are ZIP snapshots of each world&apos;s <b>Saved</b> folder, stored outside the server
-              so a game update can&apos;t touch them. Currently saving to{" "}
-              <span style={{ fontWeight: 800 }}>{backupLoc.custom ? "a custom folder" : "the default folder"}</span>:
+              <Trans i18nKey="settings.backupLocationDesc"
+                values={{ where: backupLoc.custom ? t("settings.customFolder") : t("settings.defaultFolder") }}
+                components={{ b: <b />, w: <span style={{ fontWeight: 800 }} /> }} />
             </p>
             <p className="subtle" style={{ fontFamily: "var(--font-mono)", fontSize: "0.74rem", margin: "0 0 0.6rem", wordBreak: "break-all" }}>{backupLoc.path}</p>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-              <input className="input" style={{ flex: 1, minWidth: 220 }} placeholder="Leave blank for the default location"
+              <input className="input" style={{ flex: 1, minWidth: 220 }} placeholder={t("settings.backupPathPlaceholder")}
                 value={backupPath} onChange={(e) => setBackupPath(e.target.value)} />
               {isElectron && (
-                <button className="btn btn-ghost" onClick={pickBackupDir} disabled={saving}><Icon name="folder" size={15} /> Choose folder</button>
+                <button className="btn btn-ghost" onClick={pickBackupDir} disabled={saving}><Icon name="folder" size={15} /> {t("settings.chooseFolder")}</button>
               )}
-              <button className="btn btn-primary" onClick={() => saveBackupDir(backupPath)} disabled={saving}>Save</button>
+              <button className="btn btn-primary" onClick={() => saveBackupDir(backupPath)} disabled={saving}>{t("common.save")}</button>
               {backupLoc.custom && (
-                <button className="btn btn-ghost" onClick={() => saveBackupDir("")} disabled={saving}>Reset</button>
+                <button className="btn btn-ghost" onClick={() => saveBackupDir("")} disabled={saving}>{t("common.reset")}</button>
               )}
             </div>
             <p className="subtle" style={{ fontWeight: 600, fontSize: "0.72rem", margin: "0.5rem 0 0" }}>
-              Existing backups stay where they are — only new backups go to the new folder.
+              {t("settings.existingBackupsNote")}
             </p>
           </div>
         )}
       </div>
 
       <div className="panel" style={{ padding: "1.3rem" }}>
-        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>SteamCMD</h3>
+        <h3 className="heading" style={{ fontSize: "1.05rem", marginTop: 0 }}>{t("settings.steamcmdTitle")}</h3>
         <p style={{ fontWeight: 700, fontSize: "0.86rem", margin: 0 }}>
           <span className={steam?.installed ? "s-running" : "s-crashed"}>
-            {steam?.installed ? "● Installed" : "○ Not installed yet"}
+            {steam?.installed ? t("settings.steamcmdInstalled") : t("settings.steamcmdNotInstalled")}
           </span>
-          <span className="subtle"> — installed automatically on first world provisioning.</span>
+          <span className="subtle">{t("settings.steamcmdNote")}</span>
         </p>
         {steam?.path && <p className="subtle" style={{ fontFamily: "var(--font-mono)", fontSize: "0.74rem", marginTop: 6 }}>{steam.path}</p>}
       </div>
