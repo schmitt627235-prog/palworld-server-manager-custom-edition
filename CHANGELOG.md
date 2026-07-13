@@ -3,7 +3,7 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.0.1] — 2026-07-12
+## [2.1.0] — 2026-07-13
 
 ### Added
 - **Portable Windows build (no installation).** The release now ships a portable
@@ -53,6 +53,10 @@ This project adheres to [Semantic Versioning](https://semver.org/).
   connection (and finalized on shutdown), keeping memory flat no matter how long the
   app runs. Your worlds and save data were never at risk from this — it only affected
   the manager's own bookkeeping database.
+
+## [2.0.1] — 2026-07-12
+
+### Fixed
 - **The connect address now shows your real network IP, not just `127.0.0.1`.** The
   Overview showed only `127.0.0.1:<port>`, which works *only* from the PC running the
   server — leading some to think the app forced the server to bind to loopback. It
