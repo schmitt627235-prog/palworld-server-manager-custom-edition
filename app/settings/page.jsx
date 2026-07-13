@@ -145,7 +145,11 @@ export default function SettingsPage() {
         <div style={{ marginTop: "1.1rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
             <div className="heading" style={{ fontSize: "0.92rem" }}>{t("language.browseTitle")}</div>
-            <button className="btn btn-ghost" style={{ marginLeft: "auto", padding: "0.2rem 0.5rem", fontSize: "0.72rem" }}
+            <Link href="/language-packs" className="btn btn-ghost" style={{ marginLeft: "auto", padding: "0.2rem 0.5rem", fontSize: "0.72rem" }}
+              title={t("language.makeOwn")}>
+              <Icon name="info" size={13} /> {t("language.makeOwn")}
+            </Link>
+            <button className="btn btn-ghost" style={{ padding: "0.2rem 0.5rem", fontSize: "0.72rem" }}
               onClick={loadCatalog} disabled={catalog === null || !!busyCode}>
               <Icon name="refresh" size={13} /> {t("language.refresh")}
             </button>
