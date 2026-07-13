@@ -16,8 +16,8 @@ export default function SettingsPage() {
   const [backupPath, setBackupPath] = useState("");
   const [langs, setLangs] = useState([]);
   const [switching, setSwitching] = useState(false);
-  const [packBusy, setPackBusy] = useState(false);
-  const [packUrl, setPackUrl] = useState("");
+  const [catalog, setCatalog] = useState(null); // null=loading, {checked,packs}=loaded
+  const [busyCode, setBusyCode] = useState(""); // code currently installing/updating/deleting
   const isElectron = typeof window !== "undefined" && window.desktop?.isElectron;
 
   useEffect(() => {
@@ -25,7 +25,13 @@ export default function SettingsPage() {
     api("/api/steamcmd").then(setSteam).catch(() => {});
     api("/api/settings/backup-dir").then((r) => { setBackupLoc(r.backup); setBackupPath(r.backup.custom ? r.backup.path : ""); }).catch(() => {});
     api("/api/i18n/languages").then((r) => setLangs(r.languages || [])).catch(() => {});
+    loadCatalog();
   }, []);
+
+  const loadCatalog = () =>
+    api("/api/i18n/registry")
+      .then((r) => setCatalog({ checked: !!r.checked, packs: r.packs || [] }))
+      .catch(() => setCatalog({ checked: false, packs: [] }));
 
   const chooseLanguage = async (code) => {
     if (code === i18n.language) return;
@@ -40,50 +46,34 @@ export default function SettingsPage() {
 
   const refreshLangs = () => api("/api/i18n/languages").then((r) => setLangs(r.languages || [])).catch(() => {});
 
-  // After a new pack lands, pull it into the live i18next instance so its strings are
-  // usable immediately (and switch to it if the user just added the active language).
-  const afterPackAdded = async (language) => {
-    await refreshLangs();
-    if (language?.code) {
-      try { await switchLanguage(language.code, language.dir || "ltr"); setS((prev) => (prev ? { ...prev, language: language.code } : prev)); } catch {}
-    }
-  };
-
-  const importPack = async (e) => {
-    const file = e.target.files?.[0]; if (!file) return;
-    setPackBusy(true);
+  // Install (or update) a pack straight from the GitHub catalog. The download route
+  // re-validates every pack exactly like a hand-imported file — the catalog only
+  // supplies the (host-allowlisted) link. We don't auto-switch; it just becomes
+  // available in the picker above.
+  const installFromCatalog = async (entry) => {
+    setBusyCode(entry.code);
     try {
-      const content = await file.text();
-      const r = await api("/api/i18n/import", { method: "POST", body: { content } });
-      toast(t("language.imported", { name: r.language?.nativeName || r.language?.code || "" }), "success");
-      await afterPackAdded(r.language);
-    } catch (err) { toast(err.message || t("language.readError"), "error"); }
-    finally { setPackBusy(false); e.target.value = ""; }
-  };
-
-  const downloadPack = async () => {
-    if (!packUrl.trim()) return;
-    setPackBusy(true);
-    try {
-      const r = await api("/api/i18n/download", { method: "POST", body: { url: packUrl.trim() } });
-      toast(t("language.imported", { name: r.language?.nativeName || r.language?.code || "" }), "success");
-      setPackUrl("");
-      await afterPackAdded(r.language);
+      const r = await api("/api/i18n/download", { method: "POST", body: { url: entry.url, updatedAt: entry.updatedAt } });
+      toast(t("language.imported", { name: r.language?.nativeName || entry.nativeName || entry.code }), "success");
+      await refreshLangs();
+      loadCatalog();
     } catch (err) { toast(err.message, "error"); }
-    finally { setPackBusy(false); }
+    finally { setBusyCode(""); }
   };
 
-  const removePack = async (lang) => {
-    if (!confirm(t("language.confirmRemove", { name: lang.nativeName || lang.code }))) return;
-    setPackBusy(true);
+  // Delete an installed pack — no need to leave the app.
+  const deleteFromCatalog = async (entry) => {
+    if (!confirm(t("language.confirmRemove", { name: entry.nativeName || entry.code }))) return;
+    setBusyCode(entry.code);
     try {
-      const r = await api(`/api/i18n/import?code=${encodeURIComponent(lang.code)}`, { method: "DELETE" });
+      const r = await api(`/api/i18n/import?code=${encodeURIComponent(entry.code)}`, { method: "DELETE" });
       setLangs(r.languages || []);
+      loadCatalog();
       toast(t("language.removed"), "success");
-      // If the removed pack was active, fall back to English.
-      if (i18n.language === lang.code) { await switchLanguage("en", "ltr"); setS((prev) => (prev ? { ...prev, language: "en" } : prev)); }
+      // If the deleted pack was the active language, fall back to English.
+      if (i18n.language === entry.code) { await switchLanguage("en", "ltr"); setS((prev) => (prev ? { ...prev, language: "en" } : prev)); }
     } catch (err) { toast(err.message, "error"); }
-    finally { setPackBusy(false); }
+    finally { setBusyCode(""); }
   };
 
   const saveBackupDir = async (p) => {
@@ -151,40 +141,73 @@ export default function SettingsPage() {
           ) : null;
         })()}
 
-        {/* Import / download community packs */}
+        {/* Language packs from the GitHub catalog — install / update / delete, all in-app */}
         <div style={{ marginTop: "1.1rem", borderTop: "1px solid var(--border)", paddingTop: "1rem" }}>
-          <div className="heading" style={{ fontSize: "0.92rem" }}>{t("language.addPackTitle")}</div>
-          <p className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem", margin: "0.2rem 0 0.7rem" }}>{t("language.addPackDesc")}</p>
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
-            <label className="btn btn-ghost" style={{ cursor: packBusy ? "default" : "pointer" }}>
-              <Icon name="upload" size={15} /> {packBusy ? t("language.importing") : t("language.importFile")}
-              <input type="file" accept=".json,application/json" hidden disabled={packBusy} onChange={importPack} />
-            </label>
-          </div>
-          <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
-            <input className="input" style={{ flex: 1, minWidth: 220 }} placeholder={t("language.downloadUrlPlaceholder")}
-              value={packUrl} onChange={(e) => setPackUrl(e.target.value)} disabled={packBusy}
-              onKeyDown={(e) => e.key === "Enter" && downloadPack()} />
-            <button className="btn btn-primary" onClick={downloadPack} disabled={packBusy || !packUrl.trim()}>
-              <Icon name="globe" size={15} /> {packBusy ? t("language.downloading") : t("language.download")}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+            <div className="heading" style={{ fontSize: "0.92rem" }}>{t("language.browseTitle")}</div>
+            <button className="btn btn-ghost" style={{ marginLeft: "auto", padding: "0.2rem 0.5rem", fontSize: "0.72rem" }}
+              onClick={loadCatalog} disabled={catalog === null || !!busyCode}>
+              <Icon name="refresh" size={13} /> {t("language.refresh")}
             </button>
           </div>
+          <p className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem", margin: "0.2rem 0 0.7rem" }}>{t("language.browseDesc")}</p>
 
-          {langs.some((l) => l.custom) && (
-            <div style={{ marginTop: "0.9rem" }}>
-              <label className="label">{t("language.yourPacks")}</label>
-              <div style={{ display: "grid", gap: "0.4rem" }}>
-                {langs.filter((l) => l.custom).map((l) => (
-                  <div key={l.code} className="panel-inset" style={{ padding: "0.5rem 0.7rem", display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-                    <span style={{ fontWeight: 800, fontSize: "0.84rem" }}>{l.nativeName}</span>
-                    <span className="subtle" style={{ fontWeight: 700, fontSize: "0.72rem" }}>{l.code} · {t("language.completeness", { percent: l.completeness })}</span>
-                    <button className="btn btn-ghost" style={{ marginLeft: "auto", padding: "0.25rem 0.55rem", fontSize: "0.74rem" }}
-                      onClick={() => removePack(l)} disabled={packBusy}>
-                      <Icon name="trash" size={13} /> {t("language.remove")}
-                    </button>
+          {catalog === null ? (
+            <p className="subtle" style={{ fontWeight: 700, fontSize: "0.78rem" }}>{t("common.loading")}</p>
+          ) : !catalog.checked ? (
+            <div className="panel-inset" style={{ padding: "0.7rem 0.9rem", borderLeft: "3px solid var(--yellow)" }}>
+              <p className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem", margin: 0 }}>{t("language.catalogOffline")}</p>
+            </div>
+          ) : catalog.packs.length === 0 ? (
+            <p className="subtle" style={{ fontWeight: 600, fontSize: "0.76rem" }}>{t("language.noPacks")}</p>
+          ) : (
+            <div style={{ display: "grid", gap: "0.4rem" }}>
+              {catalog.packs.map((p) => {
+                const busy = busyCode === p.code;
+                const anyBusy = !!busyCode;
+                return (
+                  <div key={p.code} className="panel-inset" style={{ padding: "0.5rem 0.7rem", display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 800, fontSize: "0.84rem" }}>
+                        {p.nativeName} <span className="subtle" style={{ fontWeight: 700 }}>· {p.name}</span>
+                        {p.installed && <span className="s-running" style={{ fontWeight: 800, fontSize: "0.72rem", marginLeft: "0.4rem", whiteSpace: "nowrap" }}>✓ {t("language.installed")}</span>}
+                      </div>
+                      <div className="subtle" style={{ fontWeight: 700, fontSize: "0.72rem" }}>
+                        {p.code}
+                        {typeof p.completeness === "number" ? ` · ${t("language.completeness", { percent: p.completeness })}` : ""}
+                        {p.authors?.length ? ` · ${t("language.byAuthors", { authors: p.authors.join(", ") })}` : ""}
+                      </div>
+                    </div>
+                    <div style={{ marginLeft: "auto", display: "flex", gap: "0.35rem", alignItems: "center" }}>
+                      {p.unsupported ? (
+                        <span className="subtle" style={{ fontWeight: 700, fontSize: "0.72rem" }}>{t("language.needsAppVersion", { version: p.appMinVersion })}</span>
+                      ) : busy ? (
+                        <button className="btn btn-ghost" disabled style={{ padding: "0.25rem 0.6rem", fontSize: "0.74rem" }}>{t("language.installing")}</button>
+                      ) : (
+                        <>
+                          {p.updateAvailable && (
+                            <button className="btn btn-primary" style={{ padding: "0.25rem 0.6rem", fontSize: "0.74rem" }}
+                              onClick={() => installFromCatalog(p)} disabled={anyBusy}>
+                              <Icon name="download" size={13} /> {t("language.update")}
+                            </button>
+                          )}
+                          {p.installed ? (
+                            <button className="btn btn-ghost" style={{ padding: "0.25rem 0.55rem", fontSize: "0.74rem" }}
+                              onClick={() => deleteFromCatalog(p)} disabled={anyBusy}>
+                              <Icon name="trash" size={13} /> {t("language.remove")}
+                            </button>
+                          ) : (
+                            <button className="btn btn-primary" style={{ padding: "0.25rem 0.6rem", fontSize: "0.74rem" }}
+                              onClick={() => installFromCatalog(p)} disabled={anyBusy}>
+                              <Icon name="download" size={13} /> {t("language.install")}
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           )}
         </div>

@@ -5,7 +5,9 @@
     "nativeName": "Español",
     "dir": "ltr",
     "schema": 1,
-    "authors": ["Palworld Server Manager"]
+    "authors": [
+      "Palworld Server Manager"
+    ]
   },
   "strings": {
     "nav.worlds": "Mundos",
@@ -20,7 +22,6 @@
     "action.toggleTheme": "Cambiar tema",
     "action.expand": "Expandir",
     "action.collapse": "Contraer",
-
     "common.loading": "Cargando…",
     "common.checking": "Comprobando…",
     "common.starting": "Iniciando…",
@@ -33,7 +34,6 @@
     "common.day": "Día",
     "common.scope": "Ámbito",
     "common.current": "actual",
-
     "settings.language": "Idioma",
     "settings.languageHelp": "Cambia todas las etiquetas traducidas de la aplicación. Puedes cambiarlo cuando quieras.",
     "settings.languagePartial": "Es posible que algunos textos sigan apareciendo en inglés hasta que este paquete de idioma esté totalmente traducido.",
@@ -51,11 +51,22 @@
     "language.confirmRemove": "¿Quitar el paquete de idioma \"{{name}}\"? Su archivo se eliminará.",
     "language.remove": "Quitar",
     "language.readError": "No se pudo leer ese archivo.",
+    "language.browseTitle": "Paquetes de idioma de la comunidad",
+    "language.browseDesc": "Traducciones listas alojadas en el GitHub del proyecto. Instala una con un clic: se comprueba y valida igual que un archivo importado.",
+    "language.install": "Instalar",
+    "language.installing": "Instalando…",
+    "language.installed": "Instalado",
+    "language.update": "Actualizar",
+    "language.refresh": "Actualizar lista",
+    "language.catalogOffline": "No se pudo acceder al catálogo de paquetes — comprueba tu conexión y pulsa Actualizar lista.",
+    "language.needsAppVersion": "Requiere la app v{{version}}",
+    "language.byAuthors": "por {{authors}}",
+    "language.noPacks": "Aún no hay paquetes de la comunidad disponibles.",
+    "language.packLibrary": "Explorar la biblioteca de paquetes en GitHub →",
     "wizard.title": "Bienvenido a Palworld Server Manager",
     "wizard.subtitle": "Elige tu idioma para empezar.",
     "wizard.help": "Puedes cambiarlo más tarde en Ajustes.",
     "wizard.continue": "Empezar",
-
     "worlds.title": "Tus mundos",
     "worlds.summary_one": "{{count}} mundo · {{running}} en ejecución · {{players}} en línea",
     "worlds.summary_other": "{{count}} mundos · {{running}} en ejecución · {{players}} en línea",
@@ -76,7 +87,6 @@
     "toast.worldStarted": "Mundo iniciado",
     "toast.worldStopped": "Mundo detenido",
     "toast.worldRestarted": "Mundo reiniciado",
-
     "usage.title": "Uso",
     "usage.subtitle": "CPU y memoria en vivo de los mundos en ejecución · {{cores}} núcleos · muestreado cada {{sec}}s",
     "usage.allRunning": "Todos los mundos en ejecución",
@@ -102,14 +112,12 @@
     "usage.collecting": "Recopilando muestras…",
     "usage.emptyTitle": "No hay mundos en ejecución",
     "usage.emptyBody": "Inicia un mundo para ver aquí el uso de CPU y memoria en vivo. Las métricas se muestrean en todo el árbol de procesos de cada servidor.",
-
     "downloads.title": "Descargas y actualizaciones",
     "downloads.clearHistory": "Borrar historial",
     "downloads.inProgress": "En curso",
     "downloads.history": "Historial",
     "downloads.noActive": "No hay descargas ni actualizaciones activas.",
     "downloads.historyEmpty": "Las instalaciones y actualizaciones completadas aparecerán aquí.",
-
     "common.dismiss": "Descartar",
     "status.running": "En ejecución",
     "status.stopped": "Detenido",
@@ -136,14 +144,12 @@
     "job.phase.backup": "Creando copia de seguridad",
     "job.phase.settings": "Escribiendo configuración",
     "job.phase.finalizing": "Finalizando",
-
     "common.cancel": "Cancelar",
     "common.copy": "Copiar",
     "common.copied": "¡Copiado!",
     "common.deleting": "Eliminando…",
     "common.update": "Actualizar",
     "common.updating": "Actualizando…",
-
     "world.allWorlds": "Todos los mundos",
     "world.customize": "Personalizar",
     "world.updateStarted": "Actualización iniciada — sigue el progreso en la bandeja de descargas",
@@ -184,11 +190,9 @@
     "world.deleteWithFilesDesc": "Elimina permanentemente toda la carpeta de instalación ({{dir}}), incluidas todas las partidas guardadas y copias de seguridad. No hay recuperación posible.",
     "world.deleteConfirmLabel": "Escribe <b>{{name}}</b> para confirmar la eliminación permanente",
     "world.deleteEverything": "Eliminar todo",
-
     "common.yes": "sí",
     "common.none": "ninguna",
     "common.browse": "Examinar",
-
     "create.addWorld": "Añadir un mundo",
     "create.addIntro": "Instala un servidor dedicado de Palworld nuevo, o registra uno que ya tengas en disco.",
     "create.installNew": "Instalar servidor nuevo",
@@ -226,11 +230,9 @@
     "create.addThisServer": "Añadir este servidor",
     "create.adding": "Añadiendo…",
     "create.registered": "Servidor existente registrado",
-
     "common.send": "Enviar",
     "common.saving": "Guardando…",
     "common.change": "Cambiar",
-
     "admin.broadcastTitle": "Anunciar a los jugadores",
     "admin.announcePlaceholder": "Mensaje de anuncio…",
     "admin.broadcastHint": "Inicia el mundo para poder anunciar.",
@@ -269,18 +271,15 @@
     "admin.savePorts": "Guardar puertos",
     "admin.stopBeforePorts": "Detén el mundo antes de cambiar sus puertos.",
     "admin.portsUpdated": "Puertos actualizados — inicia el mundo para aplicar",
-
     "common.save": "Guardar",
     "common.edit": "Editar",
     "common.restore": "Restaurar",
-
     "logs.linesBuffered_one": "{{count}} línea en búfer",
     "logs.linesBuffered_other": "{{count}} líneas en búfer",
     "logs.clear": "Limpiar",
     "logs.live": "En vivo",
     "logs.paused": "Pausado",
     "logs.waiting": "Esperando salida. Los registros aparecen aquí cuando el mundo está en ejecución.",
-
     "backups.backupNow": "Crear copia ahora",
     "backups.working": "Trabajando…",
     "backups.importSave": "Importar partida (.zip)",
@@ -295,7 +294,6 @@
     "backups.importPickerDesktop": "La importación de partidas con el selector de archivos está disponible en la app de escritorio.",
     "backups.imported_one": "Partida importada · {{count}} jugador",
     "backups.imported_other": "Partida importada · {{count}} jugadores",
-
     "broadcast.stopBeforeMod": "Detén el mundo antes de cambiar el mod de anuncios.",
     "broadcast.modInstalledRestart": "Mod de anuncios en pantalla instalado. Reinicia el mundo para cargarlo.",
     "broadcast.modCopiedNoUe4ss": "Mod de anuncios copiado, pero no se detectó UE4SS — instala UE4SS primero.",
@@ -342,7 +340,6 @@
     "broadcast.firing": "enviando…",
     "broadcast.inTime": "en {{time}}",
     "broadcast.inDaysTime": "en {{days}}d {{time}}",
-
     "info.title": "Información y guías",
     "info.subtitle": "Ayuda opcional para sacar el máximo partido a tu servidor.",
     "info.guideInternetTitle": "Cómo alojar tu servidor en internet",
@@ -366,11 +363,9 @@
     "info.step6LocalPort": "<b>Puerto local:</b> el puerto del juego de tu mundo (p. ej. <code>8211</code> — se muestra en la página del mundo)",
     "info.step7Title": "Obtén tu dirección pública",
     "info.step7": "playit.gg te da una <b>IP y puerto públicos</b>. Compártelos con tus amigos — en Palworld usan <b>Multijugador → Conectar por IP</b> y los pegan. ¡Listo!",
-
     "common.on": "Activado",
     "common.off": "Desactivado",
     "common.reset": "Restablecer",
-
     "settings.title": "Ajustes",
     "settings.saved": "Guardado",
     "settings.appearance": "Apariencia",
@@ -398,10 +393,8 @@
     "settings.steamcmdInstalled": "● Instalado",
     "settings.steamcmdNotInstalled": "○ Aún no instalado",
     "settings.steamcmdNote": " — se instala automáticamente al aprovisionar el primer mundo.",
-
     "common.pickerDesktop": "El selector de archivos está disponible en la app de escritorio.",
     "common.folderPickerDesktop": "El selector de carpetas está disponible en la app de escritorio.",
-
     "players.none": "No hay jugadores conectados ahora mismo.",
     "players.name": "Nombre",
     "players.level": "Nivel",
@@ -411,7 +404,6 @@
     "players.ban": "Banear",
     "players.kicked": "{{name}} expulsado",
     "players.banned": "{{name}} baneado",
-
     "chat.stopBeforeChange": "Detén el mundo antes de cambiar el mod de chat.",
     "chat.installedRestart": "Mod de chat instalado. Reinicia el mundo para empezar a capturar el chat.",
     "chat.copiedNoUe4ss": "Mod de chat copiado, pero no se detectó UE4SS — instala UE4SS primero.",
@@ -442,7 +434,6 @@
     "chat.startToBroadcast": "Inicia el mundo para transmitir",
     "chat.announce": "Anunciar",
     "chat.footer": "Palworld no tiene un endpoint REST para enviar como jugador, así que los mensajes de administrador salen como un anuncio del servidor (transmitido a todos).",
-
     "schedule.added": "Tarea programada añadida",
     "schedule.job": "Tarea",
     "schedule.jobType.restart": "Reinicio",
@@ -469,7 +460,6 @@
     "warn.save": "Guardar avisos",
     "warn.saved": "Ajustes de aviso guardados",
     "warn.defaultMessage": "El servidor se reiniciará en {minutes} minuto(s). Ponte a salvo, por favor.",
-
     "mods.loading": "Cargando mods…",
     "mods.toggledOn": "Mods activados — reinicia para aplicar",
     "mods.toggledOff": "Mods desactivados — reinicia para aplicar",
@@ -511,7 +501,6 @@
     "mods.wsStep3": "<b>Pega el ID</b> en el campo y haz clic en <b>Añadir</b>. PSM lo encuentra en tus bibliotecas de Steam (cualquier unidad) y lo instala en este mundo.",
     "mods.wsModalNote": "¿No tienes copia en Steam? Usa <b>Importar mod (.zip)</b> en su lugar — elige un archivo de mod que contenga un <code>Info.json</code> y PSM lo instalará directamente, sin necesidad de suscripción.",
     "mods.gotIt": "Entendido",
-
     "discord.testSent": "Mensaje de prueba enviado — revisa tu canal de Discord",
     "discord.saved": "Ajustes de Discord guardados",
     "discord.notificationsTitle": "Notificaciones de Discord",
@@ -533,7 +522,6 @@
     "discord.discard": "Descartar",
     "discord.saving": "Guardando…",
     "discord.saveChanges": "Guardar cambios",
-
     "ue4ss.stopBeforeInstall": "Detén el mundo antes de instalar UE4SS.",
     "ue4ss.installedRestart": "UE4SS instalado — reinicia el mundo para cargarlo.",
     "ue4ss.installedNotDetected": "La instalación se ejecutó pero no se detectó UE4SS.",
@@ -565,7 +553,6 @@
     "ue4ss.enabledBtn": "Activado",
     "ue4ss.disabledBtn": "Desactivado",
     "ue4ss.restartNote": "Los mods se cargan al arrancar el servidor — <b>reinicia el mundo</b> tras cualquier cambio.",
-
     "editor.savedChanges_one": "{{count}} cambio guardado — reinicia para aplicar.",
     "editor.savedChanges_other": "{{count}} cambios guardados — reinicia para aplicar.",
     "editor.noChanges": "No hay cambios que guardar",
@@ -598,7 +585,6 @@
     "editor.iniEditorTitle": "Edita el PalWorldSettings.ini sin procesar con historial de versiones",
     "editor.on": "Activado",
     "editor.off": "Desactivado",
-
     "ini.discardConfirm": "Tienes cambios sin guardar en el ini. ¿Descartarlos?",
     "ini.savedRestart": "Guardado — reinicia el mundo para aplicar",
     "ini.saved": "Guardado",
@@ -624,7 +610,6 @@
     "ini.unsavedTitle": "Cambios sin guardar",
     "ini.keepEditing": "Seguir editando",
     "ini.discardChanges": "Descartar cambios",
-
     "customize.readError": "No se pudo leer la imagen",
     "customize.saved": "Mundo personalizado",
     "customize.worldName": "Nombre del mundo",

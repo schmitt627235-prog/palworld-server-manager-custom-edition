@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
-const https = require("https");
 const fs = require("fs");
 const path = require("path");
 const { P } = require("@/lib/paths");
-const { validatePackText, MAX_BYTES } = require("@/lib/i18n/validate");
+const { validatePackText } = require("@/lib/i18n/validate");
+const { getText } = require("@/lib/i18n/fetch");
 const { listLanguages } = require("@/lib/i18n/loader");
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const MAX_REDIRECTS = 4;
-
-// POST { url } — download a pack the user pastes a link to, then validate + save it
-// exactly like an imported file. https-only, size-capped mid-stream, and time-boxed;
-// the download is aborted the moment it exceeds the cap so a malicious host can't
-// stream us an unbounded body.
+// POST { url, updatedAt? } — download a pack the user pastes a link to (or that the
+// community-pack catalog points at), then validate + save it exactly like an imported
+// file. The transport (getText) is https-only, size-capped mid-stream, and time-boxed.
+//
+// After validation we stamp provenance onto the CLEAN pack (never trusting the pack's
+// own meta): meta.source = the url it came from, meta.updatedAt = the catalog's date.
+// The registry route compares that stamp against the index to flag stale packs.
 export async function POST(req) {
   let body;
   try { body = await req.json(); } catch { return bad("Invalid request body."); }
@@ -31,6 +32,11 @@ export async function POST(req) {
   const { ok, pack, error } = validatePackText(text);
   if (!ok) return bad(error);
 
+  // Provenance (post-validation so the validator stays pure).
+  pack.meta.source = url;
+  const updatedAt = typeof body?.updatedAt === "string" ? body.updatedAt.trim() : "";
+  if (updatedAt) pack.meta.updatedAt = updatedAt.slice(0, 32);
+
   try {
     const file = path.join(P.languagePacks(), `${pack.meta.code}.json`);
     fs.writeFileSync(file, JSON.stringify(pack, null, 2), "utf8");
@@ -40,37 +46,6 @@ export async function POST(req) {
 
   const language = listLanguages().find((l) => l.code === pack.meta.code) || null;
   return NextResponse.json({ ok: true, language });
-}
-
-function getText(url, redirects = 0) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(url, {
-      headers: { "User-Agent": "palworld-server-manager", Accept: "application/json, text/plain" },
-      timeout: 8000,
-    }, (res) => {
-      // Follow https redirects (GitHub raw / release assets bounce through a CDN).
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        res.destroy();
-        if (redirects >= MAX_REDIRECTS) return reject(new Error("Too many redirects."));
-        const next = new URL(res.headers.location, url);
-        if (next.protocol !== "https:") return reject(new Error("Redirect left https."));
-        return getText(next.toString(), redirects + 1).then(resolve, reject);
-      }
-      if (res.statusCode !== 200) { res.destroy(); return reject(new Error(`Server responded ${res.statusCode}.`)); }
-
-      let bytes = 0;
-      const chunks = [];
-      res.on("data", (c) => {
-        bytes += c.length;
-        if (bytes > MAX_BYTES) { res.destroy(); reject(new Error("Pack is too large (max 512 KB).")); return; }
-        chunks.push(c);
-      });
-      res.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-      res.on("error", reject);
-    });
-    req.on("error", () => reject(new Error("Could not reach that host.")));
-    req.on("timeout", () => { req.destroy(); reject(new Error("Download timed out.")); });
-  });
 }
 
 function bad(error, status = 400) {
