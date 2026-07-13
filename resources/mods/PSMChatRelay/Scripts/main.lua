@@ -97,10 +97,11 @@ local function on_chat(self, chat_message_param)
         if text == "" then return end
         local name = to_str(msg.Sender)
         -- System/server broadcasts (join/leave notices, admin announcements) come
-        -- through this same hook with no Sender. They're localized by the game (often
-        -- Japanese) and the app already tracks join/leave separately, so skip them —
-        -- only relay real player chat, which always has a sender.
-        if name == "" then return end
+        -- through this same hook either with no Sender or with a synthetic "SYSTEM"
+        -- sender, and the game localizes the text (often Japanese, e.g.
+        -- "Nameがログインしました。"). The app already tracks join/leave separately, so skip
+        -- them — only relay real player chat, which always carries a personal sender.
+        if name == "" or name:upper() == "SYSTEM" then return end
         append_line(name, "", text)
     end)
     if not ok then
