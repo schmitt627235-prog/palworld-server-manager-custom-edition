@@ -3,6 +3,25 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] — 2026-07-14
+
+### Added
+- **The app now speaks your language.** Every screen, label, tab, and toast can be
+  shown in a language other than English, chosen from **Settings → Language** and
+  applied instantly (no restart). English ships built in; **Spanish, Japanese, and
+  Chinese (Simplified)** are available as ready-made translations.
+- **Community language packs, installed from inside the app.** Settings → Language
+  lists translation packs hosted on the project's GitHub and lets you **install,
+  update, and remove** each one with a single click — no files to download by hand and
+  no visit to GitHub required. The list shows which packs are already installed and
+  flags when a newer version is available.
+- **Bring your own translation.** A new **Language packs** guide page (opened from the
+  *Make your own* button on the language settings) explains the simple pack format,
+  offers the English strings as a downloadable template, and lets you add your own pack
+  by importing a `.json` file or pasting a link. Any label you don't translate falls
+  back to English, so even a partial translation works. Untrusted packs are validated
+  before they're saved.
+
 ## [2.1.0] — 2026-07-13
 
 ### Added
