@@ -2,7 +2,7 @@
 
 An extended, multilingual fork of the original **Palworld Server Manager**, focused on safe operation of existing servers, reserved-slot management, Playit.gg support, and easier administration.
 
-> **Current release:** `2.2.0-CE` — CE means **Custom Edition**.
+> **Current release:** `2.2.1-CE` — CE means **Custom Edition**.
 
 ## Credits and upstream project
 
@@ -14,7 +14,15 @@ This project is based on the GPL-3.0-licensed work of **PrakashMandal-IV (Frenzi
 
 The Custom Edition preserves the original license and does not claim ownership of the upstream project.
 
-## Highlights in 2.2.0-CE
+## What's new in 2.2.1-CE
+
+- Product branding is now consistently shown as **P-S-M Custom Manager** in the window title and all 13 bundled language files.
+- Version metadata and the lockfile now report `2.2.1-CE`, keeping in-app GitHub update checks aligned with the published release.
+- The Windows release is provided in three clearly separated forms: standalone installation, upgrade from the official manager, and update for an existing Custom Edition installation.
+- Installers use English command-line output and include both English and German documentation.
+- Existing manager data, registered worlds and `Pal\\Saved` remain outside the release payload; patch packages create backups before replacement.
+
+## Custom Edition features
 
 - **Reserved Slots** per world
   - Multiple SteamID64 entries

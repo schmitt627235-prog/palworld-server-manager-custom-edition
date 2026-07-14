@@ -7,7 +7,7 @@ const dbm = require("@/lib/db");
 const { loadResources, languageMeta } = require("@/lib/i18n/loader");
 
 export const metadata = {
-  title: "Palworld Server Manager",
+  title: "P-S-M Custom Manager",
   description: "Provision, run, monitor and update multiple Palworld dedicated server worlds.",
   // Serve the favicon from public/icon.png. (Not via the app/icon.png convention,
   // which would collide with public/icon.png for the /icon.png URL and 500.)
