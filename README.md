@@ -1,165 +1,138 @@
-# Palworld Server Manager
+# Palworld Server Manager Custom Edition
 
-A desktop app for Windows and Linux that makes running one or more **Palworld dedicated
-servers** simple — no command line, no editing config files by hand. Install it, point it at
-a server (new or existing), and manage everything from a clean interface.
+An extended, multilingual fork of the original **Palworld Server Manager**, focused on safe operation of existing servers, reserved-slot management, Playit.gg support, and easier administration.
 
----
+> **Current release:** `2.2.0-CE` — CE means **Custom Edition**.
+
+## Credits and upstream project
+
+This project is based on the GPL-3.0-licensed work of **PrakashMandal-IV (Frenzi24)**.
+
+- Original GitHub project: [PrakashMandal-IV/palworld-server-manager](https://github.com/PrakashMandal-IV/palworld-server-manager)
+- Original author on GitHub: [PrakashMandal-IV](https://github.com/PrakashMandal-IV)
+- Original author on Nexus Mods: [Frenzi24](https://next.nexusmods.com/profile/Frenzi24)
+
+The Custom Edition preserves the original license and does not claim ownership of the upstream project.
+
+## Highlights in 2.2.0-CE
+
+- **Reserved Slots** per world
+  - Multiple SteamID64 entries
+  - Roles: Owner, Admin, Moderator, VIP, and Friend
+  - Optional display names and notes
+  - Configurable reserved capacity from 1 to 31 slots
+  - Reserved-player visibility in the world interface
+- **Playit.gg Center**
+  - Local and public port settings
+  - Community-server launch configuration
+  - Tunnel and connectivity diagnostics
+  - Safe defaults for `-publiclobby`, public IP, and public port handling
+- **Multilingual interface**
+  - English is the first-launch default
+  - Language can be changed under Settings
+  - 13 included languages, each containing all 713 current translation keys
+- **Safety and compatibility**
+  - Existing official 2.1.0 installations can be upgraded with the dedicated patch
+  - Automatic backup before patching
+  - Existing manager data and registered worlds are retained
+  - `Pal\Saved` is backed up but never supplied, replaced, or deleted by the release
+  - Standalone installation uses an isolated data directory
+- **Administration improvements**
+  - Local system and REST API health checks
+  - CPU/RAM and server status metrics
+  - Improved logging, search, filters, and error highlighting
+  - Existing backup, scheduler, Discord, player, console, mod, and world-management features remain available
+
+## Downloads
+
+Download the latest files from the [Releases page](https://github.com/schmitt627235-prog/palworld-server-manager-custom-edition/releases/latest).
+
+Two Windows packages are provided:
+
+1. **Standalone** — installs the Custom Edition independently and uses its own data directory.
+2. **Official-to-Custom Edition Patch** — upgrades an existing official Palworld Server Manager 2.1.0 installation after creating backups.
+
+Both packages include English and German README files. Windows SmartScreen may show an unknown-publisher warning because the packages are not code-signed.
+
+## Languages
+
+| Language | Code | Key coverage | Review status |
+| --- | --- | ---: | --- |
+| English | `en` | 713/713 (100%) | Primary/default |
+| German | `de` | 713/713 (100%) | Tested in the Custom Edition workflow |
+| Arabic | `ar` | 713/713 (100%) | Machine translated, community review welcome |
+| French | `fr` | 713/713 (100%) | Machine translated, community review welcome |
+| Hindi | `hi` | 713/713 (100%) | Machine translated, community review welcome |
+| Italian | `it` | 713/713 (100%) | Machine translated, community review welcome |
+| Japanese | `ja` | 713/713 (100%) | Machine translated, community review welcome |
+| Korean | `ko` | 713/713 (100%) | Machine translated, community review welcome |
+| Polish | `pl` | 713/713 (100%) | Machine translated, community review welcome |
+| Russian | `ru` | 713/713 (100%) | Machine translated, community review welcome |
+| Thai | `th` | 713/713 (100%) | Machine translated, community review welcome |
+| Turkish | `tr` | 713/713 (100%) | Machine translated, community review welcome |
+| Simplified Chinese | `zh-CN` | 713/713 (100%) | Machine translated, community review welcome |
+
+Coverage means that a language file contains every current key. It does not guarantee professional linguistic review. Corrections are welcome through pull requests.
 
 ## Screenshots
 
-| Your worlds | World overview |
+The upstream interface and its original feature set are preserved. Custom Edition screenshots will be expanded as features receive public review.
+
+| Worlds | World overview |
 | --- | --- |
-| ![Home](preview/Home.png) | ![World Overview](preview/World%20Overview.png) |
+| ![Worlds](preview/Home.png) | ![World overview](preview/World%20Overview.png) |
 
-| Settings editor | Admin |
+| Settings | Administration |
 | --- | --- |
-| ![World Settings](preview/World%20Settings.png) | ![World Admin](preview/World%20Admin.png) |
+| ![Settings](preview/World%20Settings.png) | ![Administration](preview/World%20Admin.png) |
 
-| Mods | |
-| --- | --- |
-| ![Mods](preview/Mods.png) | |
+## Reserved-slot limitation
 
----
+The manager can enforce a public-player limit through Palworld's REST API after players are visible to the server. A manager-only solution cannot guarantee pre-login priority when the Palworld server is already completely full. True admission control requires a compatible server-side extension.
 
-## What it does
+## Installation safety
 
-- **Provision new servers** via SteamCMD, or **adopt an existing** Palworld dedicated
-  server install (it keeps your world, settings, and admin password).
-- **Start / stop / restart / update** each world with one click. A crash guardian can
-  automatically restart a server that goes down.
-- **Full settings editor** — every option from `PalWorldSettings.ini` (100+ settings)
-  grouped into readable sections, with search, per-field reset, and community-tested
-  presets. Only the settings you change are written, so nothing else is disturbed.
-- **Players** — see who's online; kick / ban / unban through the official REST API.
-- **Console** — live server log stream.
-- **Backups** — take, restore, and schedule world backups.
-- **Schedule** — automatic restarts / backups on an interval or at a set time.
-- **Mods** — import and toggle server mods.
-- **Chat & Broadcast** — read in-game chat live and send announcements to players.
-- **Discord notifications** — post server events (start, stop, restart, crash, backup,
-  update) to Discord and relay in-game chat. Add several webhook **channels** per world
-  and route each event to whichever channel you want.
-- **Languages** — use the app in English, Spanish, Japanese, or Chinese, switched from
-  Settings and applied instantly. Install more community translation packs from GitHub
-  in one click, or bring your own — no restart needed.
-- **Customize** each world with a profile icon, banner, and accent color.
-- **Export / Import** settings and full world profiles as zip files, for sharing or
-  moving between machines.
-- **Multiple worlds** side by side, each with its own ports (auto-assigned to avoid
-  collisions).
+Before applying the official-to-Custom Edition patch:
 
----
+1. Stop PalServer cleanly.
+2. Close Palworld Server Manager completely.
+3. Run the patch installer as Administrator.
+4. Confirm the existing PalServer root — the directory that contains `Pal\Saved`.
 
-## Download
+The patch creates backups of the current manager application, manager data, configuration, and `Pal\Saved`. Save-game restoration is never performed automatically.
 
-Grab the latest installer from the
-[**Releases**](https://github.com/PrakashMandal-IV/palworld-server-manager/releases/latest) page:
+## Development
 
-- **Windows (installer):** `Palworld Server Manager Setup <version>.exe`
-- **Windows (portable, no install):** `PalworldServerManager-<version>-portable.exe` — runs
-  without installing and keeps all its data in a `PSM-Data` folder next to the `.exe`, so
-  you can carry it (and your worlds) on a USB stick or between PCs.
-- **Linux:** `Palworld Server Manager-<version>.AppImage`
+Requirements:
 
-> The Windows builds are not yet code-signed, so SmartScreen may show an
-> "unrecognized app" warning. Click **More info → Run anyway** to proceed.
-
----
-
-## Getting started
-
-1. **Install** the app using the provided installer (Windows) or AppImage (Linux).
-2. On first launch you'll see **Your worlds**. Click **New world** to create one, or use
-   **Use existing** to adopt a server you already have (for example under
-   `Steam\steamapps\common\PalServer`).
-3. Once a world is listed, click **Start**. The first launch may take a moment while the
-   server initializes.
-4. Open a world and use the tabs — Overview, Players, Broadcast, Chat, Console, Settings,
-   Backups, Schedule, Mods, Discord, Admin — to manage it.
-
----
-
-## Connecting to your server
-
-Open a world and look at the **Connect** box on the Overview tab. On the same PC, players
-join with:
-
-```
-127.0.0.1:<game port>     (e.g. 127.0.0.1:8211)
-```
-
-In Palworld: **Join Multiplayer → Connect via IP** and paste the address.
-
-### Letting friends join over the internet
-By default your server is only reachable on your local network. To open it up you can port
-forward on your router, or use a free tunneling service. The app includes a step-by-step
-guide for **playit.gg** (a free option that needs no router changes) under the **Info**
-section. This is a recommendation, not a requirement.
-
----
-
-## Dedicated vs community servers
-
-A **community server** is the same as a dedicated server, except it also appears in
-Palworld's in-game public server browser so anyone can find and join it. It's toggled with
-a launch flag. A **private/dedicated** server is joined by IP only. Either way, the app manages it the same — toggle it per world in the Admin tab.
-
----
-
-## A note on settings
-
-Palworld only applies server settings **when the server boots**, so after changing settings
-you must **restart** the world for them to take effect. The app writes a minimal config
-(only what you change), matching how Palworld itself stores settings — so your existing
-values and any in-game choices are preserved.
-
-Ports, the REST API, and the admin password are managed by the app automatically and aren't
-shown in the settings editor, so they can't be broken by accident.
-
----
-
-## Data & storage
-
-The app stores its registry (your list of worlds and their metadata) in your user data
-folder:
-
-- **Windows (installer):** `%APPDATA%\palworld-server-manager\`
-- **Windows (portable):** a `PSM-Data` folder next to the portable `.exe`
-- **Linux:** `~/.config/palworld-server-manager/`
-
-Your actual Palworld worlds, saves, and settings stay in each server's own install folder —
-the app never moves them.
-
----
-
-## Requirements
-
-- Windows 10/11 (64-bit) or a modern 64-bit Linux distribution.
-- Enough disk space for the Palworld dedicated server and its saves.
-- For provisioning new servers: an internet connection (SteamCMD downloads the server).
-
----
-
-## Building from source
-
-Requires Node.js 22.5+.
+- Windows or Linux
+- Node.js 22 LTS recommended
+- npm
 
 ```bash
 npm install
-npm run dist:win      # Windows installer + portable .exe -> release/
-npm run dist:linux    # Linux AppImage                    -> release/
-npm run pack          # unpacked build for testing        -> release/
+npm run dev
 ```
 
-On Windows, run the first packaging build from a terminal opened **as Administrator** (or
-with Developer Mode enabled) so electron-builder can extract its tooling.
+Production build:
 
----
+```bash
+npm run build:next
+npm run prepare:standalone
+npm run dist:win
+```
 
-## Tech
+Validate all language files:
 
-Electron shell wrapping a self-contained Next.js server (App Router). Data is stored in
-SQLite via a pure-WASM backend, so the app needs no native modules or database install.
-All Palworld administration uses the official REST API; the deprecated RCON protocol is off
-by default and opt-in only.
+```bash
+node scripts/validate-language-packs.js
+```
+
+## Privacy
+
+The public repository and release packages do not contain personal Steam IDs, real world saves, passwords, webhook URLs, private server addresses, or local user paths. See [PRIVACY.md](PRIVACY.md).
+
+## License
+
+Licensed under [GPL-3.0](LICENSE), following the upstream project. Source code and license notices must remain available when redistributed.
+

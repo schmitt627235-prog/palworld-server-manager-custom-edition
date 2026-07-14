@@ -7,6 +7,10 @@ const nextConfig = {
   // Keep native/wasm SQLite backends external so their files (incl. the .wasm
   // binary) are traced into the standalone node_modules rather than bundled.
   experimental: {
+    // The synchronous WASM SQLite backend uses a lock directory. Parallel page-data
+    // workers can open the same registry during prerendering and deadlock each other.
+    // A single build worker keeps production builds deterministic on Windows.
+    cpus: 1,
     serverComponentsExternalPackages: ["node-sqlite3-wasm"],
     // Never trace the local runtime data dir into the standalone build. `.data/`
     // holds the dev database (worlds + admin passwords), SteamCMD, logs and backups;

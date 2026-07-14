@@ -14,6 +14,11 @@ export const metadata = {
   icons: { icon: "/icon.png" },
 };
 
+// The selected language lives in the runtime registry. Rendering the shell at build
+// time would open SQLite from several Next workers and can lock the WASM backend.
+// It would also bake the build machine's language into the package.
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({ children }) {
   // Resolve the chosen language server-side and SSR its dictionary into first paint,
   // so non-English users never see a flash of untranslated English.

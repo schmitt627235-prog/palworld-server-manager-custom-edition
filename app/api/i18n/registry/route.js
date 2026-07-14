@@ -19,7 +19,7 @@ export const runtime = "nodejs";
 
 const REGISTRY_URL =
   process.env.PAL_I18N_REGISTRY_URL ||
-  "https://raw.githubusercontent.com/PrakashMandal-IV/palworld-server-manager/main/registry/index.json";
+  "https://raw.githubusercontent.com/schmitt627235-prog/palworld-server-manager-custom-edition/main/registry/index.json";
 const TTL = 30 * 60 * 1000; // re-fetch the index at most every 30 min
 const MAX_ENTRIES = 500;
 const CODE_RE = /^[a-z]{2}(-[A-Z]{2})?$/;
@@ -77,11 +77,13 @@ function validateIndex(text) {
 // Current app version (same sources as the version route) so packs that declare
 // appMinVersion can be greyed out server-side — the UI never has to compare versions.
 function currentVersion() {
-  if (process.env.PALWORLD_APP_VERSION) return process.env.PALWORLD_APP_VERSION;
+  let bundled = "0.0.0";
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
-    return pkg.version || "0.0.0";
-  } catch { return "0.0.0"; }
+    bundled = pkg.version || bundled;
+  } catch {}
+  const shell = process.env.PALWORLD_APP_VERSION || "0.0.0";
+  return cmp(bundled, shell) >= 0 ? bundled : shell;
 }
 
 function cmp(a, b) {

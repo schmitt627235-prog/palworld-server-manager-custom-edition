@@ -16,6 +16,8 @@ import AdminPanel from "@/components/AdminPanel";
 import ChatPanel from "@/components/ChatPanel";
 import BroadcastPanel from "@/components/BroadcastPanel";
 import DiscordPanel from "@/components/DiscordPanel";
+import ReservedSlotsPanel from "@/components/ReservedSlotsPanel";
+import PlayitPanel from "@/components/PlayitPanel";
 
 const TABS = [
   { id: "overview", labelKey: "world.tab.overview", icon: "grid" },
@@ -27,6 +29,8 @@ const TABS = [
   { id: "backups", labelKey: "world.tab.backups", icon: "download" },
   { id: "schedule", labelKey: "world.tab.schedule", icon: "clock" },
   { id: "mods", labelKey: "world.tab.mods", icon: "shield" },
+  { id: "reserved", labelKey: "world.tab.reserved", icon: "users" },
+  { id: "playit", labelKey: "world.tab.playit", icon: "globe" },
   { id: "discord", labelKey: "world.tab.discord", icon: "bell" },
   { id: "admin", labelKey: "world.tab.admin", icon: "settings" },
 ];
@@ -170,6 +174,8 @@ export default function WorldDetail() {
           </div>
         )}
         {tab === "discord" && <DiscordPanel world={world} onChange={load} />}
+        {tab === "reserved" && <ReservedSlotsPanel worldId={id} maxPlayers={live?.metrics?.maxplayernum || 32} />}
+        {tab === "playit" && <PlayitPanel world={world} running={running} onChange={load} />}
         {tab === "admin" && <AdminPanel world={world} running={running} onChange={load} />}
       </div>
 
