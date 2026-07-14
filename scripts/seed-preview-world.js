@@ -11,7 +11,7 @@ fs.mkdirSync(path.join(root, "Pal", "Saved", "SaveGames", "0", "CE311TESTWORLD")
 if (!dbm.getWorld(worldId)) {
   dbm.insertWorld({
     world_id: worldId,
-    display_name: "CE 3.1.1 Testwelt",
+    display_name: "Community Test Server",
     install_dir: root,
     game_port: 8211,
     query_port: 27015,
@@ -37,14 +37,14 @@ if (!dbm.getWorld(worldId)) {
 dbm.saveReservedSlots(worldId, {
   enabled: false,
   reserved_slots: 1,
-  message: "Der verbleibende Serverplatz ist reserviert.",
+    message: "The remaining server slot is reserved.",
 });
 dbm.upsertReservedPlayer(worldId, {
   // Synthetic, non-routable fixture below the normal SteamID64 account range.
   steam_id: "76561190000000000",
-  display_name: "Testspieler",
+  display_name: "Example Player",
   role: "owner",
-  note: "Voreingetragener Preview-Testeintrag",
+  note: "Public documentation example",
   enabled: true,
 });
 dbm.setSetting("language", "en");

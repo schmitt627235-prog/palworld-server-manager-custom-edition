@@ -76,15 +76,19 @@ Coverage means that a language file contains every current key. It does not guar
 
 ## Screenshots
 
-The upstream interface and its original feature set are preserved. Custom Edition screenshots will be expanded as features receive public review.
+All screenshots use an isolated synthetic test profile. They contain no real server, player, Steam, or save-game data.
 
-| Worlds | World overview |
+| Worlds | Language settings |
 | --- | --- |
-| ![Worlds](preview/Home.png) | ![World overview](preview/World%20Overview.png) |
+| ![Worlds](docs/screenshots/01-worlds.png) | ![Language settings](docs/screenshots/02-language-settings.png) |
 
-| Settings | Administration |
+| World overview | Reserved slots |
 | --- | --- |
-| ![Settings](preview/World%20Settings.png) | ![Administration](preview/World%20Admin.png) |
+| ![World overview](docs/screenshots/03-world-overview.png) | ![Reserved slots](docs/screenshots/04-reserved-slots.png) |
+
+| Playit.gg Center |
+| --- |
+| ![Playit.gg Center](docs/screenshots/05-playit-center.png) |
 
 ## Reserved-slot limitation
 
@@ -135,4 +139,3 @@ The public repository and release packages do not contain personal Steam IDs, re
 ## License
 
 Licensed under [GPL-3.0](LICENSE), following the upstream project. Source code and license notices must remain available when redistributed.
-
