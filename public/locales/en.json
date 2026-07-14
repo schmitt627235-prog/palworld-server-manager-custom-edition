@@ -583,6 +583,8 @@
     "discord.kind.crash": "Server crashed",
     "discord.kind.backup": "Backup created",
     "discord.kind.update": "Server updated",
+    "discord.kind.join": "Player joined",
+    "discord.kind.leave": "Player left",
     "discord.kind.chat": "In-game chat relay",
     "discord.relayTitle": "Relay in-game chat to Discord",
     "discord.relayDesc": "Post this world's captured in-game chat to the webhook above for a Palworld→Discord feed. Needs the chat relay mod installed on the <b>Chat</b> tab.",

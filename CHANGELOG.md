@@ -3,6 +3,15 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Discord notifications when players join or leave.** The Discord tab's event list
+  now includes **Player joined** and **Player left**, each routable to any of your
+  webhook channels (or *Don't send*). They're off by default, so existing setups get
+  no new noise. Join/leave is tracked by a background watcher, so the notifications
+  fire even when the app window isn't open on that world.
+
 ## [2.2.0] — 2026-07-14
 
 ### Added

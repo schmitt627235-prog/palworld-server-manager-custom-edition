@@ -643,6 +643,8 @@
     "discord.kind.crash": "サーバークラッシュ",
     "discord.kind.backup": "バックアップ作成",
     "discord.kind.update": "サーバー更新",
+    "discord.kind.join": "プレイヤー参加",
+    "discord.kind.leave": "プレイヤー退出",
     "discord.kind.chat": "ゲーム内チャットリレー",
     "language.makeOwn": "自分で作る",
     "packGuide.title": "言語パック",

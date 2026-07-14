@@ -643,6 +643,8 @@
     "discord.kind.crash": "Servidor caído",
     "discord.kind.backup": "Copia creada",
     "discord.kind.update": "Servidor actualizado",
+    "discord.kind.join": "Jugador conectado",
+    "discord.kind.leave": "Jugador desconectado",
     "discord.kind.chat": "Relé de chat del juego",
     "language.makeOwn": "Crea el tuyo",
     "packGuide.title": "Paquetes de idioma",

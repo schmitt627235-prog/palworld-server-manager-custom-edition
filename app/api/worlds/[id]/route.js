@@ -6,11 +6,13 @@ const rest = require("@/lib/restclient");
 const ini = require("@/lib/ini");
 const steam = require("@/lib/steamcmd");
 const { conflictsInRegistry } = require("@/lib/ports");
+const { boot } = require("@/lib/bootstrap");
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(_req, { params }) {
+  boot(); // make sure the background presence poller (join/leave) is running
   let w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   if (!w.build_id) {
@@ -28,8 +30,9 @@ export async function GET(_req, { params }) {
       rest.metrics(w).catch(() => null),
       rest.settings(w).catch(() => null),
     ]);
-    // session diff (join/leave) — persist events
-    try { diffSessions(w.world_id, players?.players || []); } catch {}
+    // Session join/leave is tracked by the background presence poller
+    // (lib/presence.js), so it fires even when this page isn't open — no
+    // inline diff here (a second diff would double-count against the poller).
   }
   const events = dbm.listEvents(w.world_id, 40);
   const sessions = dbm.listSessions(w.world_id, 30);
@@ -134,15 +137,4 @@ export async function DELETE(req, { params }) {
   }
   dbm.deleteWorld(params.id);
   return NextResponse.json({ ok: true });
-}
-
-// diff consecutive player polls to record join/leave (spec §5)
-const g = globalThis;
-if (!g.__PAL_LASTPLAYERS) g.__PAL_LASTPLAYERS = new Map();
-function diffSessions(worldId, players) {
-  const now = new Map(players.map((p) => [p.userId || p.playerId || p.name, p.name]));
-  const prev = g.__PAL_LASTPLAYERS.get(worldId) || new Map();
-  for (const [uid, name] of now) if (!prev.has(uid)) dbm.logSession(worldId, uid, name, "join");
-  for (const [uid, name] of prev) if (!now.has(uid)) dbm.logSession(worldId, uid, name, "leave");
-  g.__PAL_LASTPLAYERS.set(worldId, now);
 }

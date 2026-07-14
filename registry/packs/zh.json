@@ -643,6 +643,8 @@
     "discord.kind.crash": "服务器已崩溃",
     "discord.kind.backup": "已创建备份",
     "discord.kind.update": "服务器已更新",
+    "discord.kind.join": "玩家加入",
+    "discord.kind.leave": "玩家离开",
     "discord.kind.chat": "游戏内聊天转发",
     "language.makeOwn": "制作自己的",
     "packGuide.title": "语言包",
