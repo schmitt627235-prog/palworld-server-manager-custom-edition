@@ -6,16 +6,19 @@ const path = require("path");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const REPO = "PrakashMandal-IV/palworld-server-manager";
+const REPO = "schmitt627235-prog/palworld-server-manager-custom-edition";
 const RELEASES_URL = `https://github.com/${REPO}/releases/latest`;
 
-// Current app version: injected by Electron (app.getVersion()), else read package.json.
+// A patch update replaces resources/app but deliberately keeps the original Electron
+// shell. Prefer the bundled CE package version when it is newer than the shell version.
 function currentVersion() {
-  if (process.env.PALWORLD_APP_VERSION) return process.env.PALWORLD_APP_VERSION;
+  let bundled = "0.0.0";
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
-    return pkg.version || "0.0.0";
-  } catch { return "0.0.0"; }
+    bundled = pkg.version || bundled;
+  } catch {}
+  const shell = process.env.PALWORLD_APP_VERSION || "0.0.0";
+  return cmp(bundled, shell) >= 0 ? bundled : shell;
 }
 
 // Compare dotted numeric versions. Returns 1 if a>b, -1 if a<b, 0 if equal.

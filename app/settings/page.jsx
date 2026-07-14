@@ -128,7 +128,9 @@ export default function SettingsPage() {
             onChange={(e) => chooseLanguage(e.target.value)}>
             {langs.map((l) => (
               <option key={l.code} value={l.code}>
-                {l.nativeName}{l.completeness < 100 ? ` — ${t("language.completeness", { percent: l.completeness })}` : ""}
+                {l.nativeName}
+                {l.completeness < 100 ? ` — ${t("language.completeness", { percent: l.completeness })}` : ""}
+                {l.machineTranslated ? ` — ${t("language.machineTranslated")}` : ""}
               </option>
             ))}
           </select>
@@ -138,6 +140,8 @@ export default function SettingsPage() {
           const cur = langs.find((l) => l.code === i18n.language);
           return cur && cur.completeness < 100 ? (
             <p className="subtle" style={{ fontWeight: 600, fontSize: "0.72rem", margin: "0.5rem 0 0" }}>{t("settings.languagePartial")}</p>
+          ) : cur?.machineTranslated && !cur?.humanReviewed ? (
+            <p className="subtle" style={{ fontWeight: 600, fontSize: "0.72rem", margin: "0.5rem 0 0" }}>{t("language.needsReview")}</p>
           ) : null;
         })()}
 
