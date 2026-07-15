@@ -2,7 +2,7 @@
 
 An extended, multilingual fork of the original **Palworld Server Manager**, focused on safe operation of existing servers, reserved-slot management, Playit.gg support, and easier administration.
 
-> **Current release:** `2.2.1-CE` — CE means **Custom Edition**.
+> **Current release:** `2.2.2-CE` — CE means **Custom Edition**.
 
 ## Credits and upstream project
 
@@ -17,7 +17,7 @@ The Custom Edition preserves the original license and does not claim ownership o
 ## What's new in 2.2.1-CE
 
 - Product branding is now consistently shown as **P-S-M Custom Manager** in the window title and all 13 bundled language files.
-- Version metadata and the lockfile now report `2.2.1-CE`, keeping in-app GitHub update checks aligned with the published release.
+- Version metadata and the lockfile now report `2.2.2-CE`, keeping in-app GitHub update checks aligned with the published release.
 - The Windows release is provided in three clearly separated forms: standalone installation, upgrade from the official manager, and update for an existing Custom Edition installation.
 - Installers use English command-line output and include both English and German documentation.
 - Existing manager data, registered worlds and `Pal\\Saved` remain outside the release payload; patch packages create backups before replacement.
@@ -83,6 +83,16 @@ Both packages include English and German README files. Windows SmartScreen may s
 Coverage means that a language file contains every current key. It does not guarantee professional linguistic review. Corrections are welcome through pull requests.
 
 ## Screenshots
+
+### 2.2.2-CE release images
+
+![Health Center](docs/screenshots/2.2.2-ce-health-center.png)
+
+![Safe Update Center](docs/screenshots/2.2.2-ce-safe-update-center.png)
+
+![Backup Center](docs/screenshots/2.2.2-ce-backup-center.png)
+
+![Reserved Slots and Guard Dry Run](docs/screenshots/2.2.2-ce-reserved-slots-dry-run.png)
 
 All screenshots use an isolated synthetic test profile. They contain no real server, player, Steam, or save-game data.
 
