@@ -1,7 +1,7 @@
 {
   "name": "palworld-server-manager",
-  "version": "2.2.1-CE",
-  "description": "P-S-M Custom Manager based on Palworld Server Manager 2.2.0",
+  "version": "2.3.0-CE",
+  "description": "P-S-M Custom Manager 2.3.0-CE based on upstream 2.3.0",
   "author": "Palworld Server Manager",
   "main": "electron/main.js",
   "private": true,

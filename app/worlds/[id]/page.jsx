@@ -29,9 +29,9 @@ const TABS = [
   { id: "backups", labelKey: "world.tab.backups", icon: "download" },
   { id: "schedule", labelKey: "world.tab.schedule", icon: "clock" },
   { id: "mods", labelKey: "world.tab.mods", icon: "shield" },
+  { id: "discord", labelKey: "world.tab.discord", icon: "bell" },
   { id: "reserved", labelKey: "world.tab.reserved", icon: "users" },
   { id: "playit", labelKey: "world.tab.playit", icon: "globe" },
-  { id: "discord", labelKey: "world.tab.discord", icon: "bell" },
   { id: "admin", labelKey: "world.tab.admin", icon: "settings" },
 ];
 

@@ -5,7 +5,9 @@
     "nativeName": "English",
     "dir": "ltr",
     "schema": 1,
-    "authors": ["Palworld Server Manager"]
+    "authors": [
+      "Palworld Server Manager"
+    ]
   },
   "strings": {
     "nav.worlds": "Worlds",
@@ -20,7 +22,6 @@
     "action.toggleTheme": "Toggle theme",
     "action.expand": "Expand",
     "action.collapse": "Collapse",
-
     "common.loading": "Loading…",
     "common.checking": "Checking…",
     "common.starting": "Starting…",
@@ -33,7 +34,6 @@
     "common.day": "Day",
     "common.scope": "Scope",
     "common.current": "current",
-
     "settings.language": "Language",
     "settings.languageHelp": "Changes every translated label in the app. You can switch anytime.",
     "settings.languagePartial": "Some text may still appear in English until this language pack is fully translated.",
@@ -94,7 +94,6 @@
     "wizard.subtitle": "Choose your language to get started.",
     "wizard.help": "The manager starts in English. You can change the interface language anytime under Settings → Language.",
     "wizard.continue": "Get started",
-
     "worlds.title": "Your worlds",
     "worlds.summary_one": "{{count}} world · {{running}} running · {{players}} online",
     "worlds.summary_other": "{{count}} worlds · {{running}} running · {{players}} online",
@@ -115,7 +114,6 @@
     "toast.worldStarted": "World started",
     "toast.worldStopped": "World stopped",
     "toast.worldRestarted": "World restarted",
-
     "usage.title": "Usage",
     "usage.subtitle": "Live CPU & memory for running worlds · {{cores}} cores · sampled every {{sec}}s",
     "usage.allRunning": "All running worlds",
@@ -141,14 +139,12 @@
     "usage.collecting": "Collecting samples…",
     "usage.emptyTitle": "No worlds running",
     "usage.emptyBody": "Start a world to see live CPU and memory usage graphed here. Metrics are sampled across each server's full process tree.",
-
     "downloads.title": "Downloads & updates",
     "downloads.clearHistory": "Clear history",
     "downloads.inProgress": "In progress",
     "downloads.history": "History",
     "downloads.noActive": "No active downloads or updates.",
     "downloads.historyEmpty": "Completed installs and updates will appear here.",
-
     "common.dismiss": "Dismiss",
     "status.running": "Running",
     "status.stopped": "Stopped",
@@ -175,14 +171,12 @@
     "job.phase.backup": "Backing up",
     "job.phase.settings": "Writing settings",
     "job.phase.finalizing": "Finishing up",
-
     "common.cancel": "Cancel",
     "common.copy": "Copy",
     "common.copied": "Copied!",
     "common.deleting": "Deleting…",
     "common.update": "Update",
     "common.updating": "Updating…",
-
     "world.allWorlds": "All worlds",
     "world.customize": "Customize",
     "world.updateStarted": "Update started — track progress in the downloads tray",
@@ -223,11 +217,9 @@
     "world.deleteWithFilesDesc": "Permanently deletes the entire install folder ({{dir}}) including all saves and backups. There is no recovery.",
     "world.deleteConfirmLabel": "Type <b>{{name}}</b> to confirm permanent deletion",
     "world.deleteEverything": "Delete everything",
-
     "common.yes": "yes",
     "common.none": "none",
     "common.browse": "Browse",
-
     "create.addWorld": "Add a world",
     "create.addIntro": "Install a fresh Palworld dedicated server, or register a server you already have on disk.",
     "create.installNew": "Install new server",
@@ -265,11 +257,9 @@
     "create.addThisServer": "Add this server",
     "create.adding": "Adding…",
     "create.registered": "Existing server registered",
-
     "common.send": "Send",
     "common.saving": "Saving…",
     "common.change": "Change",
-
     "admin.broadcastTitle": "Broadcast to players",
     "admin.announcePlaceholder": "Announcement message…",
     "admin.broadcastHint": "Start the world to broadcast.",
@@ -308,18 +298,15 @@
     "admin.savePorts": "Save ports",
     "admin.stopBeforePorts": "Stop the world before changing its ports.",
     "admin.portsUpdated": "Ports updated — start the world to apply",
-
     "common.save": "Save",
     "common.edit": "Edit",
     "common.restore": "Restore",
-
     "logs.linesBuffered_one": "{{count}} line buffered",
     "logs.linesBuffered_other": "{{count}} lines buffered",
     "logs.clear": "Clear",
     "logs.live": "Live",
     "logs.paused": "Paused",
     "logs.waiting": "Waiting for output. Logs appear here when the world is running.",
-
     "backups.backupNow": "Back up now",
     "backups.working": "Working…",
     "backups.importSave": "Import save (.zip)",
@@ -334,7 +321,6 @@
     "backups.importPickerDesktop": "Save import via file picker is available in the desktop app.",
     "backups.imported_one": "Imported save · {{count}} player",
     "backups.imported_other": "Imported save · {{count}} players",
-
     "broadcast.stopBeforeMod": "Stop the world before changing the broadcast mod.",
     "broadcast.modInstalledRestart": "On-screen broadcast mod installed. Restart the world to load it.",
     "broadcast.modCopiedNoUe4ss": "Broadcast mod copied, but UE4SS was not detected — install UE4SS first.",
@@ -381,7 +367,6 @@
     "broadcast.firing": "firing…",
     "broadcast.inTime": "in {{time}}",
     "broadcast.inDaysTime": "in {{days}}d {{time}}",
-
     "info.title": "Info & Guides",
     "info.subtitle": "Optional help for getting the most out of your server.",
     "info.guideInternetTitle": "How to host your server on the internet",
@@ -405,11 +390,9 @@
     "info.step6LocalPort": "<b>Local port:</b> your world's game port (e.g. <code>8211</code> — shown on the world page)",
     "info.step7Title": "Get your public address",
     "info.step7": "playit.gg gives you a <b>public IP and port</b>. Share that with friends — in Palworld they use <b>Join Multiplayer → Connect via IP</b> and paste it. Done!",
-
     "common.on": "On",
     "common.off": "Off",
     "common.reset": "Reset",
-
     "settings.title": "Settings",
     "settings.saved": "Saved",
     "settings.appearance": "Appearance",
@@ -437,10 +420,8 @@
     "settings.steamcmdInstalled": "● Installed",
     "settings.steamcmdNotInstalled": "○ Not installed yet",
     "settings.steamcmdNote": " — installed automatically on first world provisioning.",
-
     "common.pickerDesktop": "File picker is available in the desktop app.",
     "common.folderPickerDesktop": "Folder picker is available in the desktop app.",
-
     "players.none": "No players online right now.",
     "players.name": "Name",
     "players.level": "Level",
@@ -450,7 +431,6 @@
     "players.ban": "Ban",
     "players.kicked": "{{name}} kicked",
     "players.banned": "{{name}} banned",
-
     "chat.stopBeforeChange": "Stop the world before changing the chat mod.",
     "chat.installedRestart": "Chat mod installed. Restart the world to start capturing chat.",
     "chat.copiedNoUe4ss": "Chat mod copied, but UE4SS was not detected — install UE4SS first.",
@@ -481,7 +461,6 @@
     "chat.startToBroadcast": "Start the world to broadcast",
     "chat.announce": "Announce",
     "chat.footer": "Palworld has no REST endpoint to send as a player, so admin messages go out as a server announcement (broadcast to everyone).",
-
     "schedule.added": "Schedule added",
     "schedule.job": "Job",
     "schedule.jobType.restart": "Restart",
@@ -528,7 +507,6 @@
     "warn.save": "Save warnings",
     "warn.saved": "Warning settings saved",
     "warn.defaultMessage": "The server will restart in {minutes} minute(s). Please get to a safe place.",
-
     "mods.loading": "Loading mods…",
     "mods.toggledOn": "Mods enabled — restart to apply",
     "mods.toggledOff": "Mods disabled — restart to apply",
@@ -570,7 +548,6 @@
     "mods.wsStep3": "<b>Paste the ID</b> into the field and click <b>Add</b>. PSM finds it across your Steam libraries (any drive) and installs it into this world.",
     "mods.wsModalNote": "No Steam copy? Use <b>Import mod (.zip)</b> instead — pick a mod archive that contains an <code>Info.json</code> and PSM will install it directly, no subscription needed.",
     "mods.gotIt": "Got it",
-
     "discord.testSent": "Test message sent — check your Discord channel",
     "discord.saved": "Discord settings saved",
     "discord.notificationsTitle": "Discord notifications",
@@ -615,7 +592,6 @@
     "discord.discard": "Discard",
     "discord.saving": "Saving…",
     "discord.saveChanges": "Save changes",
-
     "ue4ss.stopBeforeInstall": "Stop the world before installing UE4SS.",
     "ue4ss.installedRestart": "UE4SS installed — restart the world to load it.",
     "ue4ss.installedNotDetected": "Install ran but UE4SS was not detected.",
@@ -647,7 +623,6 @@
     "ue4ss.enabledBtn": "Enabled",
     "ue4ss.disabledBtn": "Disabled",
     "ue4ss.restartNote": "Mods load at server boot — <b>restart the world</b> after any change.",
-
     "editor.savedChanges_one": "Saved {{count}} change — restart to apply.",
     "editor.savedChanges_other": "Saved {{count}} changes — restart to apply.",
     "editor.noChanges": "No changes to save",
@@ -680,7 +655,6 @@
     "editor.iniEditorTitle": "Edit the raw PalWorldSettings.ini with version history",
     "editor.on": "On",
     "editor.off": "Off",
-
     "ini.discardConfirm": "You have unsaved changes to the ini. Discard them?",
     "ini.savedRestart": "Saved — restart the world to apply",
     "ini.saved": "Saved",
@@ -706,7 +680,6 @@
     "ini.unsavedTitle": "Unsaved changes",
     "ini.keepEditing": "Keep editing",
     "ini.discardChanges": "Discard changes",
-
     "customize.readError": "Couldn't read image",
     "customize.saved": "World customized",
     "customize.worldName": "World name",
@@ -720,8 +693,8 @@
     "customize.saving": "Saving…",
     "customize.save": "Save",
     "customize.footer": "Images are resized automatically to keep things light. Banner shows on the world card (fading in from the right) and at the top of this world's page.",
-
-    "world.tab.reserved": "Reserved slots",
+    "world.tab.reserved": "Reserved Slots",
+    "world.tab.reservedGuard": "Reserved Guard — Dry Run",
     "world.tab.playit": "Playit.gg",
     "reserved.title": "Reserved slots",
     "reserved.managerModeHelp": "Keeps public occupancy below the configured limit. Enforcement will only be activated after the preview has been verified.",
@@ -750,6 +723,40 @@
     "playit.publicPort": "Public UDP port",
     "playit.localPort": "Local UDP port",
     "playit.launchPreview": "Effective launch arguments",
-    "playit.saved": "Playit settings saved"
+    "playit.saved": "Playit settings saved",
+    "nav.health": "Health Center",
+    "health.title": "Health Center and Diagnostics",
+    "health.subtitle": "Read-only checks for system resources, save paths, REST API and Playit.gg.",
+    "health.run": "Run diagnosis",
+    "health.green": "All checks passed",
+    "health.yellow": "Warnings detected",
+    "health.red": "Action required",
+    "nav.updateCenter": "Update Center",
+    "nav.backupCenter": "Backup Center",
+    "update.title": "Safe Update Center",
+    "update.subtitle": "Review the complete safety plan before any update is installed.",
+    "update.installDisabled": "Update installation",
+    "backupCenter.title": "Backup Center",
+    "backupCenter.subtitle": "Review backup integrity and retention without changing real save data.",
+    "backupCenter.beforeUpdate": "Backup before update",
+    "backupCenter.verified": "Integrity verified",
+    "backupCenter.scheduledPreview": "Scheduled preview backup",
+    "backupCenter.previewNote": "Synthetic preview entries only; no real save data is read or changed.",
+    "backupCenter.empty": "No backups recorded yet",
+    "backupCenter.emptyHelp": "Create or schedule a backup from the selected world. Existing save data is not changed by this overview.",
+    "backupCenter.backup": "World backup",
+    "backupCenter.recorded": "Recorded",
+    "reserved.dryRunTitle": "Reserved Guard — Dry Run",
+    "reserved.dryRunHelp": "Simulates enforcement with synthetic players. No player is contacted, kicked or banned.",
+    "reserved.runDryRun": "Run safe simulation",
+    "reserved.wouldRemove": "{{count}} public player(s) would be removed",
+    "reserved.noAction": "No action would be required",
+    "update.step.stop": "Stop the manager and game server safely",
+    "update.step.backup": "Back up manager data, configuration and Pal\\Saved",
+    "update.step.checksum": "Verify package checksums and structure",
+    "update.step.stage": "Stage the update without touching save data",
+    "update.step.rollback": "Keep the previous version ready for rollback",
+    "update.stableNote": "Stable update package available. Manager data, configuration and Pal\\Saved are backed up before installation.",
+    "update.openDownloads": "Open update downloads"
   }
 }

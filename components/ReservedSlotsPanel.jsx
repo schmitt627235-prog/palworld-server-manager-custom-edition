@@ -5,11 +5,12 @@ import { api, Icon, toast } from "@/components/ui";
 
 const EMPTY = { steam_id: "", display_name: "", role: "vip", note: "", enabled: true };
 
-export default function ReservedSlotsPanel({ worldId, maxPlayers = 32 }) {
+export default function ReservedSlotsPanel({ worldId, maxPlayers = 32, mode = "all" }) {
   const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [busy, setBusy] = useState(false);
+  const [dryRun, setDryRun] = useState(null);
   useEffect(() => {
     let active = true;
     api(`/api/worlds/${worldId}/reserved-slots`)
@@ -41,8 +42,17 @@ export default function ReservedSlotsPanel({ worldId, maxPlayers = 32 }) {
     try { setData(await api(`/api/worlds/${worldId}/reserved-slots?steam_id=${steamId}`, { method: "DELETE" })); }
     catch (e) { toast(e.message, "error"); }
   };
+  const simulate = async () => {
+    setBusy(true);
+    try { setDryRun(await api(`/api/worlds/${worldId}/reserved-slots/dry-run`, { method: "POST", body: { maxPlayers } })); }
+    catch (e) { toast(e.message, "error"); } finally { setBusy(false); }
+  };
+
+  const showManager = mode !== "guard";
+  const showGuard = mode !== "manager";
 
   return <div style={{ display: "grid", gap: "1rem" }}>
+    {showManager && <>
     <section className="panel-inset" style={{ padding: "1rem" }}>
       <h3 className="heading" style={{ marginTop: 0 }}>{t("reserved.title")}</h3>
       <p className="subtle">{t("reserved.managerModeHelp")}</p>
@@ -73,5 +83,18 @@ export default function ReservedSlotsPanel({ worldId, maxPlayers = 32 }) {
         </div>)}
       </div>
     </section>
+
+    </>}
+
+    {showGuard && <section className="panel-inset" style={{ padding: "1rem", borderLeft: "4px solid var(--accent)" }}>
+      <h3 className="heading" style={{ marginTop: 0 }}>{t("reserved.dryRunTitle")}</h3>
+      <p className="subtle">{t("reserved.dryRunHelp")}</p>
+      <button className="btn btn-primary" disabled={busy} onClick={simulate}><Icon name="activity" /> {t("reserved.runDryRun")}</button>
+      {dryRun && <div style={{ marginTop: "1rem", display: "grid", gap: ".5rem" }}>
+        <div className="chip">{dryRun.publicLimit} public slots · {dryRun.reservedOnline} reserved online · {dryRun.normalOnline} public online</div>
+        <b style={{ color: dryRun.wouldRemove.length ? "var(--yellow)" : "var(--green-bright)" }}>{dryRun.wouldRemove.length ? t("reserved.wouldRemove", { count: dryRun.wouldRemove.length }) : t("reserved.noAction")}</b>
+        {dryRun.players.map(p => <div key={p.steamId} className="panel-inset" style={{ padding: ".5rem .7rem", display: "flex", gap: ".7rem" }}><code>{p.steamId}</code><span>{p.name}</span><span className="chip">{p.reserved ? "RESERVED" : "PUBLIC"}</span>{p.wouldRemove && <b style={{ color: "var(--yellow)", marginLeft: "auto" }}>WOULD REMOVE</b>}</div>)}
+      </div>}
+    </section>}
   </div>;
 }

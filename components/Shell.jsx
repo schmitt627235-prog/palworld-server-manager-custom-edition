@@ -13,6 +13,9 @@ import { useJobsPoll, summarize, ProgressBar } from "@/components/jobsClient";
 const NAV = [
   { href: "/", icon: "grid", labelKey: "nav.worlds", match: (p) => p === "/" || p.startsWith("/worlds") },
   { href: "/usage", icon: "activity", labelKey: "nav.usage", match: (p) => p.startsWith("/usage") },
+  { href: "/health", icon: "activity", labelKey: "nav.health", match: (p) => p.startsWith("/health") },
+  { href: "/update-center", icon: "download", labelKey: "nav.updateCenter", match: (p) => p.startsWith("/update-center") },
+  { href: "/backup-center", icon: "download", labelKey: "nav.backupCenter", match: (p) => p.startsWith("/backup-center") },
   { href: "/settings", icon: "settings", labelKey: "nav.settings", match: (p) => p.startsWith("/settings") },
   { href: "/info", icon: "info", labelKey: "nav.info", match: (p) => p.startsWith("/info") },
 ];

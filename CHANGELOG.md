@@ -3,18 +3,6 @@
 All notable changes to Palworld Server Manager are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.2.1-CE] — 2026-07-14
-
-### Changed
-- Renamed the visible application branding to **P-S-M Custom Manager** across the window title and all 13 bundled languages.
-- Updated application and lockfile version metadata to `2.2.1-CE` for reliable GitHub release notifications.
-- Split Windows distribution into standalone, official-to-Custom-Edition patch, and Custom-Edition update packages.
-- Standardized installer output in English and included English and German documentation.
-
-### Safety
-- Release archives contain no personal Steam IDs, worlds, passwords, webhooks, public endpoints, or save games.
-- Patch packages back up manager files and `Pal\\Saved` before replacing application files; save data is never bundled or intentionally overwritten.
-
 ## [2.3.0] — 2026-07-14
 
 ### Added

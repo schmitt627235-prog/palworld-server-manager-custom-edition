@@ -4,9 +4,10 @@ const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
 const http = require("http");
+const net = require("net");
 
 const isDev = process.env.NODE_ENV === "development";
-const PORT = 4317;
+let PORT = Number(process.env.PALWORLD_MANAGER_PORT || 4317);
 let mainWindow = null;
 let nextProc = null;
 let serverReady = false;
@@ -107,6 +108,25 @@ function pingServer(url) {
   });
 }
 
+function reserveFreePort(preferredPort) {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.unref();
+    server.once("error", () => {
+      const fallback = net.createServer();
+      fallback.unref();
+      fallback.once("error", reject);
+      fallback.listen(0, "127.0.0.1", () => {
+        const freePort = fallback.address().port;
+        fallback.close(() => resolve(freePort));
+      });
+    });
+    server.listen(preferredPort, "127.0.0.1", () => {
+      server.close(() => resolve(preferredPort));
+    });
+  });
+}
+
 async function waitForServer(url, maxMs = 60000) {
   const start = Date.now();
   while (Date.now() - start < maxMs) {
@@ -174,6 +194,8 @@ function main() {
   app.whenReady().then(async () => {
     // Ensures Windows uses our icon (not the default Electron one) in the taskbar.
     if (process.platform === "win32") app.setAppUserModelId("com.palworld.servermanager");
+    if (!isDev) PORT = await reserveFreePort(PORT);
+    logToFile(`Using local web port ${PORT}`);
     startNextServer();
     const url = isDev ? process.env.ELECTRON_START_URL : `http://127.0.0.1:${PORT}`;
     serverReady = await waitForServer(url);

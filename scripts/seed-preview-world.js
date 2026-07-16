@@ -4,14 +4,14 @@ const fs = require("fs");
 const path = require("path");
 const dbm = require("../lib/db");
 
-const worldId = "ce-3-1-1-preview-world";
+const worldId = "ce-2-3-0-preview-world";
 const root = path.join(process.env.PALWORLD_MANAGER_DATA_DIR || path.join(process.cwd(), ".preview-data"), "test-world");
-fs.mkdirSync(path.join(root, "Pal", "Saved", "SaveGames", "0", "CE311TESTWORLD"), { recursive: true });
+fs.mkdirSync(path.join(root, "Pal", "Saved", "SaveGames", "0", "CE230PREVIEWWORLD"), { recursive: true });
 
 if (!dbm.getWorld(worldId)) {
   dbm.insertWorld({
     world_id: worldId,
-    display_name: "Community Test Server",
+    display_name: "P-S-M Custom Manager Test World",
     install_dir: root,
     game_port: 8211,
     query_port: 27015,
@@ -48,4 +48,4 @@ dbm.upsertReservedPlayer(worldId, {
   enabled: true,
 });
 dbm.setSetting("language", "en");
-console.log(`Preview-Testwelt bereit: ${root}`);
+console.log(`Isolated preview test world ready: ${root}`);

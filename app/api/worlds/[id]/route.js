@@ -71,7 +71,7 @@ export async function PATCH(req, { params }) {
     dbm.logEvent(params.id, "settings", `Install folder changed to ${info.installDir}`);
   }
 
-  const allowed = ["display_name", "admin_password", "server_password", "autostart", "crash_guard", "rest_api_enabled", "extra_args", "game_port", "query_port", "rest_api_port", "rcon_port", "community_server", "playit_enabled", "playit_public_ip", "playit_public_port", "mods_enabled", "discord_webhook", "notify_events", "discord_relay_chat", "discord_webhooks", "warn_enabled", "warn_lead_minutes", "warn_interval_minutes", "warn_message"];
+  const allowed = ["display_name", "admin_password", "server_password", "autostart", "crash_guard", "rest_api_enabled", "extra_args", "game_port", "query_port", "rest_api_port", "rcon_port", "community_server", "mods_enabled", "discord_webhook", "notify_events", "discord_relay_chat", "discord_webhooks", "warn_enabled", "warn_lead_minutes", "warn_interval_minutes", "warn_message"];
   const clean = {};
   for (const k of allowed) if (k in patch) clean[k] = patch[k];
   // notify_events is stored as a JSON string column; accept an object from the client.
@@ -84,19 +84,6 @@ export async function PATCH(req, { params }) {
   }
   if ("discord_relay_chat" in clean) clean.discord_relay_chat = clean.discord_relay_chat ? 1 : 0;
   if ("warn_enabled" in clean) clean.warn_enabled = clean.warn_enabled ? 1 : 0;
-  if ("playit_enabled" in clean) clean.playit_enabled = clean.playit_enabled ? 1 : 0;
-  if ("playit_public_ip" in clean) {
-    clean.playit_public_ip = String(clean.playit_public_ip || "").trim();
-    if (clean.playit_public_ip && !/^\d{1,3}(\.\d{1,3}){3}$/.test(clean.playit_public_ip)) {
-      return NextResponse.json({ ok: false, error: "Playit public IP must be a numeric IPv4 address." }, { status: 400 });
-    }
-  }
-  if ("playit_public_port" in clean) {
-    clean.playit_public_port = parseInt(clean.playit_public_port, 10);
-    if (!Number.isInteger(clean.playit_public_port) || clean.playit_public_port < 1 || clean.playit_public_port > 65535) {
-      return NextResponse.json({ ok: false, error: "Playit public port must be between 1 and 65535." }, { status: 400 });
-    }
-  }
   for (const k of ["warn_lead_minutes", "warn_interval_minutes"]) {
     if (k in clean) clean[k] = Math.max(0, parseInt(clean[k], 10) || 0);
   }
